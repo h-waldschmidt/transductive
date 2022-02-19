@@ -13,17 +13,17 @@ import (
 
 type Coordinate struct{ X, Y float64 }
 
-func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) {
-	var items plotter.XYs
+func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) plotter.XYs {
+	var distribution plotter.XYs
 
 	for i := 0; i < numberOfItems; i++ {
-		xy := Coordinate{rand.NormFloat64() * 0.1, rand.NormFloat64() * 0.1}
-		items = append(items, struct{ X, Y float64 }{xy.X, xy.Y})
+		xy := Coordinate{rand.NormFloat64()*standardDeviation + mean, rand.NormFloat64()*standardDeviation + mean}
+		distribution = append(distribution, struct{ X, Y float64 }{xy.X, xy.Y})
 	}
-	plotDistribution(items, "../../plots/test.png")
+	return distribution
 }
 
-func plotDistribution(items plotter.XYs, path string) error {
+func PlotDistribution(items plotter.XYs, path string) error {
 
 	f, err := os.Create(path)
 	if err != nil {
