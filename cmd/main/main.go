@@ -1,10 +1,9 @@
 package main
 
-import "fmt"
+import (
+	transductive "transductive-experimental-design/cmd/transductive/datamanager"
+)
 
 func main() {
-	fmt.Println("Hello World")
-
-	var age = 2
-	fmt.Println(age)
+	transductive.CreateNormalDistribution(0, 1, 50)
 }
