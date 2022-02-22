@@ -13,18 +13,21 @@ import (
 
 type Coordinate struct{ X, Y float64 }
 
-func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) plotter.XYs {
-	var distribution plotter.XYs
+func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
+	var distribution []Coordinate
 
 	for i := 0; i < numberOfItems; i++ {
 		xy := Coordinate{rand.NormFloat64()*standardDeviation + mean, rand.NormFloat64()*standardDeviation + mean}
-		distribution = append(distribution, struct{ X, Y float64 }{xy.X, xy.Y})
+		distribution = append(distribution, xy)
 	}
 	return distribution
 }
 
-func PlotDistribution(items plotter.XYs, path string) error {
-
+func PlotDistribution(items []Coordinate, path string) error {
+	var itemsXYs plotter.XYs
+	for _, xy := range items {
+		itemsXYs = append(itemsXYs, struct{ X, Y float64 }{xy.X, xy.Y})
+	}
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("could not create %s: %v", path, err)
@@ -32,27 +35,14 @@ func PlotDistribution(items plotter.XYs, path string) error {
 
 	p := plot.New()
 
-	// create scatter with all data points
-	s, err := plotter.NewScatter(items)
+	// Add the items as an scatter plot
+	s, err := plotter.NewScatter(itemsXYs)
 	if err != nil {
 		return fmt.Errorf("could not create scatter: %v", err)
 	}
 	s.GlyphStyle.Shape = draw.CrossGlyph{}
 	s.Color = color.RGBA{R: 255, A: 255}
 	p.Add(s)
-
-	var x, c float64
-	x = 1.2
-	c = -3
-
-	// create fake linear regression result
-	l, err := plotter.NewLine(plotter.XYs{
-		{3, 3*x + c}, {20, 20*x + c},
-	})
-	if err != nil {
-		return fmt.Errorf("could not create line: %v", err)
-	}
-	p.Add(l)
 
 	wt, err := p.WriterTo(256, 256, "png")
 	if err != nil {
