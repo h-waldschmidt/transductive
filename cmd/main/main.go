@@ -1,7 +1,7 @@
 package main
 
 import (
-	transductive "transductive-experimental-design/cmd/transductive/datamanager"
+	"../transductive"
 )
 
 func main() {

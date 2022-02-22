@@ -1,5 +1,5 @@
 package transductive
 
-func AlternatingOptimization() {
-	Kernel()
+func alternatingOptimization(points []Coordinate) {
+
 }
