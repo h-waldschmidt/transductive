@@ -6,3 +6,8 @@ type Matrix struct {
 	N, M   int
 	Matrix [][]float64
 }
+
+type Vector struct {
+	N      int
+	Vector []float64
+}
