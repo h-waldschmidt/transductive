@@ -31,3 +31,22 @@ func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 
 	return matrix
 }
+
+func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Vector {
+	// initializing the matrix
+	vector := Vector{len(pointsX), make([]float64, len(pointsX))}
+
+	// calculating all the values
+	for i := 0; i < len(pointsX); i++ {
+		vector.Vector[i] = rbfKernel(pointsX[i], point, variance)
+
+	}
+
+	return vector
+}
+
+func euclideanDistance(x Coordinate, y Coordinate) float64 {
+	distance := math.Pow(x.X1-y.X1, 2) + math.Pow(x.X2-y.X2, 2)
+
+	return math.Sqrt(distance)
+}
