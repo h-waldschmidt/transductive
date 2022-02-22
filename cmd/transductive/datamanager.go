@@ -11,8 +11,6 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-type Coordinate struct{ X, Y float64 }
-
 func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
 	var distribution []Coordinate
 
@@ -26,7 +24,7 @@ func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfI
 func PlotDistribution(items []Coordinate, path string) error {
 	var itemsXYs plotter.XYs
 	for _, xy := range items {
-		itemsXYs = append(itemsXYs, struct{ X, Y float64 }{xy.X, xy.Y})
+		itemsXYs = append(itemsXYs, struct{ X, Y float64 }{xy.X1, xy.X2})
 	}
 	f, err := os.Create(path)
 	if err != nil {
