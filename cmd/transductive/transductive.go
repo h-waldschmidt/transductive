@@ -1,6 +1,9 @@
 package transductive
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 func Transductive() {
 
@@ -45,8 +48,28 @@ func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance floa
 	return vector
 }
 
-func euclideanDistance(x Coordinate, y Coordinate) float64 {
-	distance := math.Pow(x.X1-y.X1, 2) + math.Pow(x.X2-y.X2, 2)
+func euclideanDistance(x Vector, y Vector) (float64, error) {
+	if len(x.Vector) != len(y.Vector) {
+		return 0, fmt.Errorf("could not calculate euclidean Distance")
+	}
+	var distance float64
+	for i := 0; i < len(x.Vector); i++ {
+		distance += math.Pow(x.Vector[i]-y.Vector[i], 2)
+	}
 
-	return math.Sqrt(distance)
+	return math.Sqrt(distance), nil
+}
+
+func euclideanNorm(x Vector) float64 {
+
+	var norm float64
+	for i := 0; i < len(x.Vector); i++ {
+		norm += math.Pow(x.Vector[i], 2)
+	}
+
+	return math.Sqrt(norm)
+}
+
+func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
+
 }
