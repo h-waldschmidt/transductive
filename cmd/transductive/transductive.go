@@ -49,6 +49,8 @@ func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance floa
 }
 
 func euclideanDistance(x Vector, y Vector) (float64, error) {
+
+	//the size of the vectors need to be the same
 	if len(x.Vector) != len(y.Vector) {
 		return 0, fmt.Errorf("could not calculate euclidean Distance")
 	}
@@ -70,6 +72,27 @@ func euclideanNorm(x Vector) float64 {
 	return math.Sqrt(norm)
 }
 
-func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
+func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
+	// The inner dimensions need to be the same
+	if matrix1.M != matrix2.N {
+		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not multiply the matrices")
+	}
+
+	matrix := Matrix{matrix1.N, matrix2.M, make([][]float64, matrix1.N)}
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i] = make([]float64, matrix2.M)
+	}
+
+	for i := 0; i < matrix1.N; i++ {
+		for j := 0; j < matrix2.M; j++ {
+			var sum float64
+			for k := 0; k < matrix1.M; k++ {
+				sum += matrix1.Matrix[i][k] * matrix2.Matrix[k][j]
+			}
+			matrix.Matrix[i][j] = sum
+		}
+	}
+
+	return matrix, nil
 }
