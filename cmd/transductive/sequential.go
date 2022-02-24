@@ -5,11 +5,13 @@ import "math"
 func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) {
 	var selectedPoints []Coordinate
 
-	// find out how to calculate the variance
+	//TODO: find out how to calculate the variance
+
+	//initialize the kVVMatrix
 	kVVMatrix := calculateKernelMatrix(points, points, 0)
 
 	for len(selectedPoints) < numOfPoints {
-		//select x to maximize function
+		//select x to maximize the criteria
 		var currentX Coordinate
 		bestValue := math.Inf(1)
 
@@ -17,13 +19,15 @@ func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) 
 			currentX = points[i]
 
 		}
-		// add it to set
+		// add it the newly found x to the set
 
-		// normalize the Kvv function
+		// normalize the Kvv function by removing the influence of x
 	}
 
 }
 
+// basically calculates the distance from all points to the given point
+// and takes the euclideanNorm of the resulting vector
 func calculateCriteria(points []Coordinate, currentX Coordinate, variance float64, mean float64) float64 {
 	kVxVector := calculateKernelVector(points, currentX, variance)
 	value := math.Pow(euclideanNorm(kVxVector), 2) / (rbfKernel(currentX, currentX, variance) + mean)

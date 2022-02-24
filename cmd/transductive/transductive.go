@@ -9,6 +9,8 @@ func Transductive() {
 
 }
 
+// using the popular rbfKernel (https://en.wikipedia.org/wiki/Radial_basis_function_kernel)
+// is necessary for the kernel regression
 func rbfKernel(x1 Coordinate, x2 Coordinate, variance float64) float64 {
 	value := -math.Pow(x1.X1-x2.X1, 2) + math.Pow(x1.X2-x2.X2, 2)
 	value = math.Sqrt(value)
@@ -36,7 +38,7 @@ func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 }
 
 func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Vector {
-	// initializing the matrix
+	// initializing the vector
 	vector := Vector{len(pointsX), make([]float64, len(pointsX))}
 
 	// calculating all the values
@@ -54,6 +56,7 @@ func euclideanDistance(x Vector, y Vector) (float64, error) {
 	if len(x.Vector) != len(y.Vector) {
 		return 0, fmt.Errorf("could not calculate euclidean Distance")
 	}
+
 	var distance float64
 	for i := 0; i < len(x.Vector); i++ {
 		distance += math.Pow(x.Vector[i]-y.Vector[i], 2)
@@ -79,11 +82,13 @@ func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not multiply the matrices")
 	}
 
+	// initialize the matrix
 	matrix := Matrix{matrix1.N, matrix2.M, make([][]float64, matrix1.N)}
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i] = make([]float64, matrix2.M)
 	}
 
+	// need to test if this is the cache efficient version of matrix multiplication
 	for i := 0; i < matrix1.N; i++ {
 		for j := 0; j < matrix2.M; j++ {
 			var sum float64
