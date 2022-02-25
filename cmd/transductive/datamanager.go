@@ -20,11 +20,6 @@ type Matrix struct {
 	Matrix [][]float64
 }
 
-type Vector struct {
-	N      int
-	Vector []float64
-}
-
 func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance float64) Matrix {
 	// initializing the matrix
 	matrix := Matrix{len(pointsX), len(pointsY), make([][]float64, len(pointsX))}
@@ -42,42 +37,47 @@ func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 	return matrix
 }
 
-func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Vector {
-	// initializing the vector
-	vector := Vector{len(pointsX), make([]float64, len(pointsX))}
+func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Matrix {
+
+	// initializing the vector(Matrix with M=1)
+	vector := Matrix{len(pointsX), 1, make([][]float64, 1)}
+	vector.Matrix[0] = make([]float64, len(pointsX))
 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
-		vector.Vector[i] = rbfKernel(pointsX[i], point, variance)
-
+		vector.Matrix[0][i] = rbfKernel(pointsX[i], point, variance)
 	}
 
 	return vector
 }
 
-func euclideanDistance(x Vector, y Vector) (float64, error) {
+func euclideanDistance(x Matrix, y Matrix) (float64, error) {
 
-	//the size of the vectors need to be the same
-	if len(x.Vector) != len(y.Vector) {
+	//x and y need to be vectors and have the same dimensions
+	if x.N != y.N || x.M > 1 || y.M > 1 {
 		return 0, fmt.Errorf("could not calculate euclidean Distance")
 	}
 
 	var distance float64
-	for i := 0; i < len(x.Vector); i++ {
-		distance += math.Pow(x.Vector[i]-y.Vector[i], 2)
+	for i := 0; i < x.N; i++ {
+		distance += math.Pow(x.Matrix[0][i]-y.Matrix[0][i], 2)
 	}
 
 	return math.Sqrt(distance), nil
 }
 
-func euclideanNorm(x Vector) float64 {
-
-	var norm float64
-	for i := 0; i < len(x.Vector); i++ {
-		norm += math.Pow(x.Vector[i], 2)
+func euclideanNorm(x Matrix) (float64, error) {
+	//x need to be a vector
+	if x.M > 1 {
+		return 0, fmt.Errorf("could not calculate euclidean Norm")
 	}
 
-	return math.Sqrt(norm)
+	var norm float64
+	for i := 0; i < x.N; i++ {
+		norm += math.Pow(x.Matrix[0][i], 2)
+	}
+
+	return math.Sqrt(norm), nil
 }
 
 func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {

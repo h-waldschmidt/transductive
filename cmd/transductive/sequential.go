@@ -35,8 +35,11 @@ func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) 
 // and takes the euclideanNorm of the resulting vector
 func calculateCriteria(points []Coordinate, currentX Coordinate, variance float64, mean float64) float64 {
 	kVxVector := calculateKernelVector(points, currentX, variance)
-	value := math.Pow(euclideanNorm(kVxVector), 2) / (rbfKernel(currentX, currentX, variance) + mean)
+	value, _ := euclideanNorm(kVxVector)
+	value = math.Pow(value, 2) / (rbfKernel(currentX, currentX, variance) + mean)
 	return value
 }
 
-func normalizeKvvMatrix(kVVMatrix Matrix) Matrix {}
+func normalizeKvvMatrix(kVVMatrix Matrix) Matrix {
+
+}
