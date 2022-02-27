@@ -129,6 +129,37 @@ func matrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
+func matrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+	// the dimensions of the matrices have to match
+	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
+		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
+	}
+
+	//initialize the matrix
+	matrix := Matrix{matrix1.N, matrix1.M, make([][]float64, matrix1.N)}
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i] = make([]float64, matrix1.M)
+	}
+
+	for i := 0; i < matrix1.N; i++ {
+		for j := 0; j < matrix1.M; j++ {
+			matrix.Matrix[i][j] = matrix1.Matrix[i][j] + matrix2.Matrix[i][j]
+		}
+	}
+
+	return matrix, nil
+}
+
+func matrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
+
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			matrix.Matrix[i][j] /= scalar
+		}
+	}
+	return matrix
+}
+
 func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
 	var distribution []Coordinate
 
