@@ -107,6 +107,22 @@ func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
+func transposeMatrix(matrix Matrix) Matrix {
+	//initialize the transpose matrix
+	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
+	for i := 0; i < transpose.N; i++ {
+		transpose.Matrix[i] = make([]float64, transpose.M)
+	}
+
+	for i := 0; i < transpose.N; i++ {
+		for j := 0; j < transpose.M; j++ {
+			transpose.Matrix[i][j] = matrix.Matrix[j][i]
+		}
+	}
+
+	return transpose
+}
+
 func matrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// the dimensions of the matrices have to match
