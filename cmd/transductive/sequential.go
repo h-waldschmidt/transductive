@@ -2,13 +2,13 @@ package transductive
 
 import "math"
 
-func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) {
+func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) []Coordinate {
 	var selectedPoints []Coordinate
 
 	//TODO: find out how to calculate the variance
 	var variance float64
 	//initialize the kVVMatrix
-	kVVMatrix := calculateKernelMatrix(points, points, 0)
+	kVVMatrix := calculateKernelMatrix(points, points, variance)
 
 	for len(selectedPoints) < numOfPoints {
 		//select x to maximize the criteria
@@ -27,8 +27,9 @@ func sequentialOptimization(points []Coordinate, numOfPoints int, mean float64) 
 		// add it the newly found x to the set
 		selectedPoints = append(selectedPoints, bestX)
 		// normalize the Kvv function by removing the influence of x
+		kVVMatrix = normalizeKvvMatrix(kVVMatrix, points, bestX, mean, variance)
 	}
-
+	return selectedPoints
 }
 
 // basically calculates the distance from all points to the given point
@@ -40,6 +41,13 @@ func calculateCriteria(points []Coordinate, currentX Coordinate, variance float6
 	return value
 }
 
-func normalizeKvvMatrix(kVVMatrix Matrix) Matrix {
+func normalizeKvvMatrix(kVVMatrix Matrix, points []Coordinate, point Coordinate, mean float64, variance float64) Matrix {
+	VxMatrix := calculateKernelVector(points, point, variance)
+	xVMatrix := transposeMatrix(VxMatrix)
+	VxxVMatrix, _ := matrixMultiplication(VxMatrix, xVMatrix)
 
+	VxxVMatrix = matrixScalarMultiplication(VxxVMatrix, 1/(1+mean))
+	kVVMatrix, _ = matrixSubtraction(kVVMatrix, VxxVMatrix)
+
+	return kVVMatrix
 }
