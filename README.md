@@ -1,6 +1,6 @@
 # transductive-experimental-design
 
-This Project/Library is based on the algorithms presented in this paper:<br>
+This Project/Library is based on the algorithms presented in the following paper:<br>
 
 Yu, Kai, Jinbo Bi, and Volker Tresp.<br>
 "Active learning via transductive experimental design."<br>
