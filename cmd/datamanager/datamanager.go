@@ -7,8 +7,6 @@ import (
 	"math/rand"
 	"os"
 
-	"transductive-experimental-design/cmd/kernelregression"
-
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg/draw"
@@ -22,7 +20,7 @@ type Matrix struct {
 	Matrix [][]float64
 }
 
-func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance float64) Matrix {
+func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance float64) Matrix {
 	// initializing the matrix
 	matrix := Matrix{len(pointsX), len(pointsY), make([][]float64, len(pointsX))}
 	for i := 0; i < matrix.N; i++ {
@@ -32,14 +30,14 @@ func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
 		for j := 0; j < len(pointsY); j++ {
-			matrix.Matrix[i][j] = kernelregression.RbfKernel(pointsX[i], pointsY[j], variance)
+			matrix.Matrix[i][j] = RbfKernel(pointsX[i], pointsY[j], variance)
 		}
 	}
 
 	return matrix
 }
 
-func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Matrix {
+func CalculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Matrix {
 
 	// initializing the vector(Matrix with M=1)
 	vector := Matrix{len(pointsX), 1, make([][]float64, 1)}
@@ -47,13 +45,13 @@ func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance floa
 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
-		vector.Matrix[0][i] = kernelregression.RbfKernel(pointsX[i], point, variance)
+		vector.Matrix[0][i] = RbfKernel(pointsX[i], point, variance)
 	}
 
 	return vector
 }
 
-func euclideanDistance(x Matrix, y Matrix) (float64, error) {
+func EuclideanDistance(x Matrix, y Matrix) (float64, error) {
 
 	//x and y need to be vectors and have the same dimensions
 	if x.N != y.N || x.M > 1 || y.M > 1 {
@@ -68,7 +66,7 @@ func euclideanDistance(x Matrix, y Matrix) (float64, error) {
 	return math.Sqrt(distance), nil
 }
 
-func euclideanNorm(x Matrix) (float64, error) {
+func EuclideanNorm(x Matrix) (float64, error) {
 	//x need to be a vector
 	if x.M > 1 {
 		return 0, fmt.Errorf("could not calculate euclidean Norm")
@@ -82,7 +80,7 @@ func euclideanNorm(x Matrix) (float64, error) {
 	return math.Sqrt(norm), nil
 }
 
-func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// The inner dimensions need to be the same
 	if matrix1.M != matrix2.N {
@@ -109,7 +107,7 @@ func matrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
-func transposeMatrix(matrix Matrix) Matrix {
+func TransposeMatrix(matrix Matrix) Matrix {
 	//initialize the transpose matrix
 	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
 	for i := 0; i < transpose.N; i++ {
@@ -125,7 +123,7 @@ func transposeMatrix(matrix Matrix) Matrix {
 	return transpose
 }
 
-func matrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
@@ -147,7 +145,7 @@ func matrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
-func matrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
@@ -168,7 +166,7 @@ func matrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
-func matrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
+func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
 
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
