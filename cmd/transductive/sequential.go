@@ -1,16 +1,20 @@
 package transductive
 
-import "math"
+import (
+	"math"
+	"transductive-experimental-design/cmd/datamanager"
+	"transductive-experimental-design/cmd/kernelregression"
+)
 
-func sequentialOptimization(points []Coordinate, numOfPoints int, lambda float64, sigma float64) []Coordinate {
-	var selectedPoints []Coordinate
+func sequentialOptimization(points []datamanager.Coordinate, numOfPoints int, lambda float64, sigma float64) []datamanager.Coordinate {
+	var selectedPoints []datamanager.Coordinate
 
 	//initialize the kVVMatrix
-	kVVMatrix := calculateKernelMatrix(points, points, sigma)
+	kVVMatrix := datamanager.calculateKernelMatrix(points, points, sigma)
 
 	for len(selectedPoints) < numOfPoints {
 		//select x to maximize the criteria
-		var bestX Coordinate
+		var bestX datamanager.Coordinate
 		bestValue := math.Inf(1)
 
 		for i := 0; i < len(points); i++ {
@@ -31,21 +35,21 @@ func sequentialOptimization(points []Coordinate, numOfPoints int, lambda float64
 }
 
 // basically calculates the distance from all points to the given point
-// and takes the euclideanNorm of the resulting vector
-func calculateCriteria(points []Coordinate, currentX Coordinate, sigma float64, lambda float64) float64 {
-	kVxVector := calculateKernelVector(points, currentX, sigma)
-	value, _ := euclideanNorm(kVxVector)
-	value = math.Pow(value, 2) / (rbfKernel(currentX, currentX, sigma) + lambda)
+// and takes the datamanager.euclideanNorm of the resulting vector
+func calculateCriteria(points []datamanager.Coordinate, currentX datamanager.Coordinate, sigma float64, lambda float64) float64 {
+	kVxVector := datamanager.calculateKernelVector(points, currentX, sigma)
+	value, _ := datamanager.euclideanNorm(kVxVector)
+	value = math.Pow(value, 2) / (kernelregression.RbfKernel(currentX, currentX, sigma) + lambda)
 	return value
 }
 
-func normalizeKvvMatrix(kVVMatrix Matrix, points []Coordinate, point Coordinate, lambda float64, sigma float64) Matrix {
-	VxMatrix := calculateKernelVector(points, point, sigma)
-	xVMatrix := transposeMatrix(VxMatrix)
-	VxxVMatrix, _ := matrixMultiplication(VxMatrix, xVMatrix)
+func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points []datamanager.Coordinate, point datamanager.Coordinate, lambda float64, sigma float64) datamanager.Matrix {
+	VxMatrix := datamanager.calculateKernelVector(points, point, sigma)
+	xVMatrix := datamanager.transposeMatrix(VxMatrix)
+	VxxVMatrix, _ := datamanager.matrixMultiplication(VxMatrix, xVMatrix)
 
-	VxxVMatrix = matrixScalarMultiplication(VxxVMatrix, 1/(1+lambda))
-	kVVMatrix, _ = matrixSubtraction(kVVMatrix, VxxVMatrix)
+	VxxVMatrix = datamanager.matrixScalarMultiplication(VxxVMatrix, 1/(1+lambda))
+	kVVMatrix, _ = datamanager.matrixSubtraction(kVVMatrix, VxxVMatrix)
 
 	return kVVMatrix
 }

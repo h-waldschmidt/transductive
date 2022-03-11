@@ -1,4 +1,4 @@
-package transductive
+package datamanager
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"math"
 	"math/rand"
 	"os"
+
+	"transductive-experimental-design/cmd/kernelregression"
 
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
@@ -30,7 +32,7 @@ func calculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
 		for j := 0; j < len(pointsY); j++ {
-			matrix.Matrix[i][j] = rbfKernel(pointsX[i], pointsY[j], variance)
+			matrix.Matrix[i][j] = kernelregression.RbfKernel(pointsX[i], pointsY[j], variance)
 		}
 	}
 
@@ -45,7 +47,7 @@ func calculateKernelVector(pointsX []Coordinate, point Coordinate, variance floa
 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
-		vector.Matrix[0][i] = rbfKernel(pointsX[i], point, variance)
+		vector.Matrix[0][i] = kernelregression.RbfKernel(pointsX[i], point, variance)
 	}
 
 	return vector

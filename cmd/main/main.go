@@ -1,11 +1,11 @@
 package main
 
 import (
-	"transductive-experimental-design/cmd/transductive"
+	"transductive-experimental-design/cmd/datamanager"
 )
 
 func main() {
-	distribution := transductive.CreateNormalDistribution(0, 1, 50)
+	distribution := datamanager.CreateNormalDistribution(0, 1, 50)
 
-	transductive.PlotDistribution(distribution, "../../plots/test.png")
+	datamanager.PlotDistribution(distribution, "../../plots/test.png")
 }

@@ -1,1 +1,1 @@
-package transductive_test
+package kernelregression_test

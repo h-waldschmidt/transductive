@@ -1,5 +1,9 @@
 package transductive
 
-func alternatingOptimization(points []Coordinate, numOfPoints int) {
+import (
+	"transductive-experimental-design/cmd/datamanager"
+)
+
+func alternatingOptimization(points []datamanager.Coordinate, numOfPoints int) {
 
 }
