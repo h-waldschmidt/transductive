@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestRBFKernel(t *testing.T) {
+func TestRBFKernel_Basic(t *testing.T) {
 	x := Coordinate{X1: 1, X2: 1}
 	y := Coordinate{X1: 2, X2: 2}
 
