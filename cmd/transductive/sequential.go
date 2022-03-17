@@ -5,13 +5,13 @@ import (
 	"transductive-experimental-design/cmd/datamanager"
 )
 
-func sequentialOptimization(points []datamanager.Coordinate, numOfPoints int, lambda float64, sigma float64) []datamanager.Coordinate {
+func SequentialOptimization(points []datamanager.Coordinate, numOfSelectedPoints int, lambda float64, sigma float64) []datamanager.Coordinate {
 	var selectedPoints []datamanager.Coordinate
 
 	//initialize the kVVMatrix
 	kVVMatrix := datamanager.CalculateKernelMatrix(points, points, sigma)
 
-	for len(selectedPoints) < numOfPoints {
+	for len(selectedPoints) < numOfSelectedPoints {
 		//select x to maximize the criteria
 		var bestX datamanager.Coordinate
 		bestValue := math.Inf(1)
