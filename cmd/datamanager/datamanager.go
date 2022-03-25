@@ -40,12 +40,14 @@ func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 func CalculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Matrix {
 
 	// initializing the vector(Matrix with M=1)
-	vector := Matrix{len(pointsX), 1, make([][]float64, 1)}
-	vector.Matrix[0] = make([]float64, len(pointsX))
+	vector := Matrix{len(pointsX), 1, make([][]float64, len(pointsX))}
+	for i := 0; i < vector.N; i++ {
+		vector.Matrix[i] = make([]float64, 1)
+	}
 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
-		vector.Matrix[0][i] = RbfKernel(pointsX[i], point, variance)
+		vector.Matrix[i][0] = RbfKernel(pointsX[i], point, variance)
 	}
 
 	return vector
@@ -74,7 +76,7 @@ func EuclideanNorm(x Matrix) (float64, error) {
 
 	var norm float64
 	for i := 0; i < x.N; i++ {
-		norm += math.Pow(x.Matrix[0][i], 2)
+		norm += math.Pow(x.Matrix[i][0], 2)
 	}
 
 	return math.Sqrt(norm), nil
@@ -110,8 +112,8 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 func TransposeMatrix(matrix Matrix) Matrix {
 	//initialize the transpose matrix
 	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
-	for i := 0; i < transpose.N; i++ {
-		transpose.Matrix[i] = make([]float64, transpose.M)
+	for i := 0; i < matrix.M; i++ {
+		transpose.Matrix[i] = make([]float64, matrix.N)
 	}
 
 	for i := 0; i < transpose.N; i++ {
