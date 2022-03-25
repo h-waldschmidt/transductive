@@ -62,7 +62,7 @@ func EuclideanDistance(x Matrix, y Matrix) (float64, error) {
 
 	var distance float64
 	for i := 0; i < x.N; i++ {
-		distance += math.Pow(x.Matrix[0][i]-y.Matrix[0][i], 2)
+		distance += math.Pow(x.Matrix[i][0]-y.Matrix[i][0], 2)
 	}
 
 	return math.Sqrt(distance), nil
@@ -112,8 +112,8 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 func TransposeMatrix(matrix Matrix) Matrix {
 	//initialize the transpose matrix
 	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
-	for i := 0; i < matrix.M; i++ {
-		transpose.Matrix[i] = make([]float64, matrix.N)
+	for i := 0; i < transpose.N; i++ {
+		transpose.Matrix[i] = make([]float64, transpose.M)
 	}
 
 	for i := 0; i < transpose.N; i++ {
@@ -135,11 +135,11 @@ func MatrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	//initialize the matrix
 	matrix := Matrix{matrix1.N, matrix1.M, make([][]float64, matrix1.N)}
 	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix1.M)
+		matrix.Matrix[i] = make([]float64, matrix.M)
 	}
 
-	for i := 0; i < matrix1.N; i++ {
-		for j := 0; j < matrix1.M; j++ {
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
 			matrix.Matrix[i][j] = matrix1.Matrix[i][j] + matrix2.Matrix[i][j]
 		}
 	}
@@ -156,12 +156,12 @@ func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	//initialize the matrix
 	matrix := Matrix{matrix1.N, matrix1.M, make([][]float64, matrix1.N)}
 	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix1.M)
+		matrix.Matrix[i] = make([]float64, matrix.M)
 	}
 
-	for i := 0; i < matrix1.N; i++ {
-		for j := 0; j < matrix1.M; j++ {
-			matrix.Matrix[i][j] = matrix1.Matrix[i][j] + matrix2.Matrix[i][j]
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			matrix.Matrix[i][j] = matrix1.Matrix[i][j] - matrix2.Matrix[i][j]
 		}
 	}
 
@@ -172,7 +172,7 @@ func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
 
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j] /= scalar
+			matrix.Matrix[i][j] *= scalar
 		}
 	}
 	return matrix
