@@ -14,12 +14,12 @@ func SequentialOptimization(points []datamanager.Coordinate, numOfSelectedPoints
 	for len(selectedPoints) < numOfSelectedPoints {
 		//select x to maximize the criteria
 		var bestX datamanager.Coordinate
-		bestValue := math.Inf(1)
+		bestValue := math.Inf(-1)
 
 		for i := 0; i < len(points); i++ {
 			currentX := points[i]
 			currentValue := calculateCriteria(points, currentX, sigma, lambda)
-			if currentValue < bestValue {
+			if currentValue > bestValue {
 				bestValue = currentValue
 				bestX = currentX
 			}
