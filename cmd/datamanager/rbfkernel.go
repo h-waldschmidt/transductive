@@ -1,15 +1,22 @@
 package datamanager
 
 import (
+	"fmt"
 	"math"
 )
 
 // using the popular rbfKernel (https://en.wikipedia.org/wiki/Radial_basis_function_kernel)
 // is necessary for the kernel regression
-func RbfKernel(x1 Coordinate, x2 Coordinate, sigma float64) float64 {
-	value := math.Pow(x1.X1-x2.X1, 2) + math.Pow(x1.X2-x2.X2, 2)
-	value /= 2 * sigma
-	value = math.Exp(-value)
+func RbfKernel(x1 []float64, x2 []float64, sigma float64) (float64, error) {
 
-	return value
+	//x and y need to have the same dimensions
+	if len(x1) != len(x2) {
+		return 0, fmt.Errorf("could not use RBFKernel")
+	}
+
+	result, _ := EuclideanDistance(x1, x2)
+	result = math.Pow(result, 2) / (2 * sigma)
+	result = math.Exp(-result)
+
+	return result, nil
 }
