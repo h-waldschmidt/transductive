@@ -12,14 +12,6 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-// TODO: Change everything to support Vector instead of Coordinate
-type Coordinate struct{ X1, X2 float64 }
-
-type Matrix struct {
-	N, M   int
-	Matrix [][]float64
-}
-
 func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, sigma float64) Matrix {
 	// initializing the matrix
 	matrix := Matrix{len(pointsX), len(pointsY), make([][]float64, len(pointsX))}
