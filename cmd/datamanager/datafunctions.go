@@ -12,7 +12,13 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix {
+func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matrix, error) {
+
+	//x and y need to have the same dimensions
+	if pointsX.N != pointsY.N {
+		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
+	}
+
 	// initializing the matrix
 	matrix := Matrix{pointsX.M, pointsY.M, make([][]float64, pointsX.M)}
 	for i := 0; i < matrix.N; i++ {
@@ -22,27 +28,32 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j] = RbfKernel(pointsX[i], pointsY[j], sigma)
+			matrix.Matrix[i][j], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
 		}
 	}
 
-	return matrix
+	return matrix, nil
 }
 
-func CalculateKernelVector(pointsX []Coordinate, point Coordinate, sigma float64) Matrix {
+func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matrix, error) {
+
+	//x and y need to have the same dimensions
+	if pointsX.N != len(point) {
+		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
+	}
 
 	// initializing the vector(Matrix with M=1)
-	vector := Matrix{len(pointsX), 1, make([][]float64, len(pointsX))}
+	vector := Matrix{pointsX.N, 1, make([][]float64, pointsX.N)}
 	for i := 0; i < vector.N; i++ {
 		vector.Matrix[i] = make([]float64, 1)
 	}
 
 	// calculating all the values
-	for i := 0; i < len(pointsX); i++ {
-		vector.Matrix[i][0] = RbfKernel(pointsX[i], point, sigma)
+	for i := 0; i < pointsX.N; i++ {
+		vector.Matrix[i][0], _ = RbfKernel(pointsX.Matrix[i], point, sigma)
 	}
 
-	return vector
+	return vector, nil
 }
 
 func EuclideanDistance(x []float64, y []float64) (float64, error) {
