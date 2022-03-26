@@ -12,16 +12,16 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, sigma float64) Matrix {
+func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix {
 	// initializing the matrix
-	matrix := Matrix{len(pointsX), len(pointsY), make([][]float64, len(pointsX))}
+	matrix := Matrix{pointsX.M, pointsY.M, make([][]float64, pointsX.M)}
 	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, len(pointsY))
+		matrix.Matrix[i] = make([]float64, pointsY.M)
 	}
 
 	// calculating all the values
-	for i := 0; i < len(pointsX); i++ {
-		for j := 0; j < len(pointsY); j++ {
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
 			matrix.Matrix[i][j] = RbfKernel(pointsX[i], pointsY[j], sigma)
 		}
 	}
@@ -45,33 +45,29 @@ func CalculateKernelVector(pointsX []Coordinate, point Coordinate, sigma float64
 	return vector
 }
 
-func EuclideanDistance(x Matrix, y Matrix) (float64, error) {
+func EuclideanDistance(x []float64, y []float64) (float64, error) {
 
 	//x and y need to be vectors and have the same dimensions
-	if x.N != y.N || x.M > 1 || y.M > 1 {
+	if len(x) != len(y) {
 		return 0, fmt.Errorf("could not calculate euclidean Distance")
 	}
 
 	var distance float64
-	for i := 0; i < x.N; i++ {
-		distance += math.Pow(x.Matrix[i][0]-y.Matrix[i][0], 2)
+	for i := 0; i < len(x); i++ {
+		distance += math.Pow(x[i]-y[i], 2)
 	}
 
 	return math.Sqrt(distance), nil
 }
 
-func EuclideanNorm(x Matrix) (float64, error) {
-	//x need to be a vector
-	if x.M > 1 {
-		return 0, fmt.Errorf("could not calculate euclidean Norm")
-	}
+func EuclideanNorm(x []float64) float64 {
 
 	var norm float64
-	for i := 0; i < x.N; i++ {
-		norm += math.Pow(x.Matrix[i][0], 2)
+	for i := 0; i < len(x); i++ {
+		norm += math.Pow(x[i], 2)
 	}
 
-	return math.Sqrt(norm), nil
+	return math.Sqrt(norm)
 }
 
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
