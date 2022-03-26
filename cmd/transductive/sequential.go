@@ -18,7 +18,7 @@ func SequentialOptimization(points []datamanager.Coordinate, numOfSelectedPoints
 
 		for i := 0; i < len(points); i++ {
 			currentX := points[i]
-			currentValue := calculateCriteria(points, currentX, sigma, lambda)
+			currentValue := calculateCriteria(kVVMatrix, currentX, i, sigma, lambda)
 			if currentValue > bestValue {
 				bestValue = currentValue
 				bestX = currentX
@@ -28,18 +28,24 @@ func SequentialOptimization(points []datamanager.Coordinate, numOfSelectedPoints
 		// add it the newly found x to the set
 		selectedPoints = append(selectedPoints, bestX)
 		// normalize the Kvv function by removing the influence of x
-		kVVMatrix = normalizeKvvMatrix(kVVMatrix, points, bestX, lambda, sigma)
+		kVVMatrix = normalizeKvvMatrix(kVVMatrix, points, bestX, sigma, lambda)
 	}
 	return selectedPoints
 }
 
 // basically calculates the distance from all points to the given point
 // and takes the datamanager.euclideanNorm of the resulting vector
-func calculateCriteria(points []datamanager.Coordinate, currentX datamanager.Coordinate, sigma float64, lambda float64) float64 {
-	kVxVector := datamanager.CalculateKernelVector(points, currentX, sigma)
-	value, _ := datamanager.EuclideanNorm(kVxVector)
-	value = math.Pow(value, 2) / (datamanager.RbfKernel(currentX, currentX, sigma) + lambda)
-	return value
+func calculateCriteria(kVVMatrix datamanager.Matrix, currentX datamanager.Coordinate, index int, sigma float64, lambda float64) float64 {
+	kVxVector := datamanager.Matrix{kVVMatrix.N, 1, make([][]float64, kVVMatrix.N)}
+	for i := 0; i < kVxVector.N; i++ {
+		kVxVector.Matrix[i] = []float64{kVVMatrix.Matrix[index][i]}
+	}
+
+	kxVVector := datamanager.TransposeMatrix(kVxVector)
+	//value, _ := datamanager.EuclideanNorm(kVxVector)
+	value, _ := datamanager.MatrixMultiplication(kxVVector, kVxVector)
+	result := value.Matrix[0][0] / (datamanager.RbfKernel(currentX, currentX, sigma) + lambda)
+	return result
 }
 
 func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points []datamanager.Coordinate, point datamanager.Coordinate, lambda float64, sigma float64) datamanager.Matrix {
@@ -47,7 +53,7 @@ func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points []datamanager.Coord
 	xVMatrix := datamanager.TransposeMatrix(VxMatrix)
 	VxxVMatrix, _ := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
 
-	VxxVMatrix = datamanager.MatrixScalarMultiplication(VxxVMatrix, 1/(1+lambda))
+	VxxVMatrix = datamanager.MatrixScalarMultiplication(VxxVMatrix, 1/(datamanager.RbfKernel(point, point, sigma)+lambda))
 	kVVMatrix, _ = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
 
 	return kVVMatrix
