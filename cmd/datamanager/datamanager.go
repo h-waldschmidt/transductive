@@ -20,7 +20,7 @@ type Matrix struct {
 	Matrix [][]float64
 }
 
-func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance float64) Matrix {
+func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, sigma float64) Matrix {
 	// initializing the matrix
 	matrix := Matrix{len(pointsX), len(pointsY), make([][]float64, len(pointsX))}
 	for i := 0; i < matrix.N; i++ {
@@ -30,14 +30,14 @@ func CalculateKernelMatrix(pointsX []Coordinate, pointsY []Coordinate, variance 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
 		for j := 0; j < len(pointsY); j++ {
-			matrix.Matrix[i][j] = RbfKernel(pointsX[i], pointsY[j], variance)
+			matrix.Matrix[i][j] = RbfKernel(pointsX[i], pointsY[j], sigma)
 		}
 	}
 
 	return matrix
 }
 
-func CalculateKernelVector(pointsX []Coordinate, point Coordinate, variance float64) Matrix {
+func CalculateKernelVector(pointsX []Coordinate, point Coordinate, sigma float64) Matrix {
 
 	// initializing the vector(Matrix with M=1)
 	vector := Matrix{len(pointsX), 1, make([][]float64, len(pointsX))}
@@ -47,7 +47,7 @@ func CalculateKernelVector(pointsX []Coordinate, point Coordinate, variance floa
 
 	// calculating all the values
 	for i := 0; i < len(pointsX); i++ {
-		vector.Matrix[i][0] = RbfKernel(pointsX[i], point, variance)
+		vector.Matrix[i][0] = RbfKernel(pointsX[i], point, sigma)
 	}
 
 	return vector
