@@ -182,6 +182,19 @@ func ConvertSliceToCoordinate(point []float64) (Coordinate, error) {
 	}
 	return Coordinate{point[0], point[1]}, nil
 }
+func ConvertMatrixToCoordinateSlice(matrix Matrix) ([]Coordinate, error) {
+	// point has to have dimension 2
+	if matrix.M != 2 {
+		return nil, fmt.Errorf("could not add the matrices")
+	}
+
+	slice := make([]Coordinate, matrix.N)
+	for i := 0; i < matrix.N; i++ {
+		slice[i] = Coordinate{matrix.Matrix[i][0], matrix.Matrix[i][1]}
+	}
+
+	return slice, nil
+}
 
 func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
 	//initialize matrix
