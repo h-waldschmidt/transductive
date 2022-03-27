@@ -175,6 +175,14 @@ func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
 	return matrix
 }
 
+func ConvertSliceToCoordinate(point []float64) (Coordinate, error) {
+	// point has to have dimension 2
+	if len(point) != 2 {
+		return Coordinate{}, fmt.Errorf("could not add the matrices")
+	}
+	return Coordinate{point[0], point[1]}, nil
+}
+
 func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
 	var distribution []Coordinate
 
