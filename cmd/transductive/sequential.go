@@ -18,7 +18,7 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 		var bestX []float64
 		bestValue := math.Inf(-1)
 
-		for i := 0; i < points.M; i++ {
+		for i := 0; i < points.N; i++ {
 			currentX := points.Matrix[i]
 			currentValue := calculateCriteria(kVVMatrix, currentX, i, sigma, lambda)
 			if currentValue > bestValue {
@@ -38,10 +38,8 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 // basically calculates the distance from all points to the given point
 // and takes the datamanager.euclideanNorm of the resulting vector
 func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index int, sigma float64, lambda float64) float64 {
-	kVxVector := datamanager.Matrix{kVVMatrix.N, 1, make([][]float64, kVVMatrix.N)}
-	for i := 0; i < kVxVector.N; i++ {
-		kVxVector.Matrix[i] = []float64{kVVMatrix.Matrix[index][i]}
-	}
+	kVxVector := datamanager.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
+	kVxVector.Matrix[0] = kVVMatrix.Matrix[index]
 
 	kxVVector := datamanager.TransposeMatrix(kVxVector)
 	//value, _ := datamanager.EuclideanNorm(kVxVector)
