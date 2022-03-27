@@ -183,6 +183,21 @@ func ConvertSliceToCoordinate(point []float64) (Coordinate, error) {
 	return Coordinate{point[0], point[1]}, nil
 }
 
+func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
+	//initialize matrix
+	matrix := Matrix{len(points), 2, make([][]float64, len(points))}
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i] = make([]float64, matrix.M)
+	}
+
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i][0] = points[i].X1
+		matrix.Matrix[i][1] = points[i].X2
+	}
+
+	return matrix
+}
+
 func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
 	var distribution []Coordinate
 
