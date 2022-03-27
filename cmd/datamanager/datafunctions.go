@@ -20,15 +20,15 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matri
 	}
 
 	// initializing the matrix
-	matrix := Matrix{pointsX.M, pointsY.M, make([][]float64, pointsX.M)}
+	matrix := Matrix{pointsY.M, pointsX.M, make([][]float64, pointsY.M)}
 	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, pointsY.M)
+		matrix.Matrix[i] = make([]float64, pointsX.M)
 	}
 
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
+			matrix.Matrix[j][i], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
 		}
 	}
 
@@ -43,14 +43,12 @@ func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matr
 	}
 
 	// initializing the vector(Matrix with M=1)
-	vector := Matrix{pointsX.N, 1, make([][]float64, pointsX.N)}
-	for i := 0; i < vector.N; i++ {
-		vector.Matrix[i] = make([]float64, 1)
-	}
+	vector := Matrix{1, pointsX.N, make([][]float64, 1)}
+	vector.Matrix[0] = make([]float64, vector.M)
 
 	// calculating all the values
 	for i := 0; i < pointsX.N; i++ {
-		vector.Matrix[i][0], _ = RbfKernel(pointsX.Matrix[i], point, sigma)
+		vector.Matrix[0][i], _ = RbfKernel(pointsX.Matrix[i], point, sigma)
 	}
 
 	return vector, nil
@@ -89,9 +87,9 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	}
 
 	// initialize the matrix
-	matrix := Matrix{matrix1.N, matrix2.M, make([][]float64, matrix1.N)}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix2.M)
+	matrix := Matrix{matrix2.M, matrix1.N, make([][]float64, matrix2.M)}
+	for i := 0; i < matrix.M; i++ {
+		matrix.Matrix[i] = make([]float64, matrix1.N)
 	}
 
 	// need to test if this is the cache efficient version of matrix multiplication
@@ -99,9 +97,9 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		for j := 0; j < matrix2.M; j++ {
 			var sum float64
 			for k := 0; k < matrix1.M; k++ {
-				sum += matrix1.Matrix[i][k] * matrix2.Matrix[k][j]
+				sum += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
 			}
-			matrix.Matrix[i][j] = sum
+			matrix.Matrix[j][i] = sum
 		}
 	}
 
