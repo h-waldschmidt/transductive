@@ -15,20 +15,20 @@ import (
 func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matrix, error) {
 
 	//x and y need to have the same dimensions
-	if pointsX.N != pointsY.N {
+	if pointsX.M != pointsY.M {
 		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
 	}
 
 	// initializing the matrix
-	matrix := Matrix{pointsY.M, pointsX.M, make([][]float64, pointsY.M)}
+	matrix := Matrix{pointsY.N, pointsX.N, make([][]float64, pointsY.N)}
 	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, pointsX.M)
+		matrix.Matrix[i] = make([]float64, pointsX.N)
 	}
 
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[j][i], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
+			matrix.Matrix[i][j], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
 		}
 	}
 
@@ -38,13 +38,13 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matri
 func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matrix, error) {
 
 	//x and y need to have the same dimensions
-	if pointsX.N != len(point) {
+	if pointsX.M != len(point) {
 		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
 	}
 
 	// initializing the vector(Matrix with M=1)
 	vector := Matrix{1, pointsX.N, make([][]float64, 1)}
-	vector.Matrix[0] = make([]float64, vector.M)
+	vector.Matrix[0] = make([]float64, pointsX.N)
 
 	// calculating all the values
 	for i := 0; i < pointsX.N; i++ {
@@ -82,24 +82,24 @@ func EuclideanNorm(x []float64) float64 {
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// The inner dimensions need to be the same
-	if matrix1.M != matrix2.N {
+	if matrix1.N != matrix2.M {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not multiply the matrices")
 	}
 
 	// initialize the matrix
-	matrix := Matrix{matrix2.M, matrix1.N, make([][]float64, matrix2.M)}
-	for i := 0; i < matrix.M; i++ {
-		matrix.Matrix[i] = make([]float64, matrix1.N)
+	matrix := Matrix{matrix1.M, matrix2.N, make([][]float64, matrix1.M)}
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i] = make([]float64, matrix.M)
 	}
 
 	// need to test if this is the cache efficient version of matrix multiplication
-	for i := 0; i < matrix1.N; i++ {
-		for j := 0; j < matrix2.M; j++ {
+	for i := 0; i < matrix1.M; i++ {
+		for j := 0; j < matrix2.N; j++ {
 			var sum float64
-			for k := 0; k < matrix1.M; k++ {
+			for k := 0; k < matrix1.N; k++ {
 				sum += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
 			}
-			matrix.Matrix[j][i] = sum
+			matrix.Matrix[i][j] = sum
 		}
 	}
 
