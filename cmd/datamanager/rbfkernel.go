@@ -5,8 +5,9 @@ import (
 	"math"
 )
 
-/**using the popular rbfKernel (https://en.wikipedia.org/wiki/Radial_basis_function_kernel)
-* is necessary for the kernel regression and many parts of the algorithms
+/**
+ * using the popular rbfKernel (https://en.wikipedia.org/wiki/Radial_basis_function_kernel)
+ * is necessary for the kernel regression and many parts of the algorithms
  */
 func RbfKernel(x1 []float64, x2 []float64, sigma float64) (float64, error) {
 

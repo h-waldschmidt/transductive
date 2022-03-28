@@ -5,6 +5,11 @@ import (
 	"transductive-experimental-design/cmd/datamanager"
 )
 
+/**
+ * Sequential Algorithm for Transductive Experimental Design
+ *
+ * Searches in every iteration the best point useing the criterion
+ */
 func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
 	selectedPoints := datamanager.Matrix{numOfSelectedPoints, points.M, make([][]float64, numOfSelectedPoints)}
 	for i := 0; i < selectedPoints.N; i++ {
@@ -35,19 +40,28 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 	return selectedPoints
 }
 
-// basically calculates the distance from all points to the given point
-// and takes the datamanager.euclideanNorm of the resulting vector
+/**
+ * Criteria used for finding the best points
+ *
+ * basically calculates the distance from all points to the given point
+ * and takes the datamanager.euclideanNorm of the resulting vector
+ */
 func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index int, sigma float64, lambda float64) float64 {
+	//initialize kVxMatrix
 	kVxVector := datamanager.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
 	kVxVector.Matrix[0] = kVVMatrix.Matrix[index]
 
 	kxVVector := datamanager.TransposeMatrix(kVxVector)
-	//value, _ := datamanager.EuclideanNorm(kVxVector)
+
 	value, _ := datamanager.MatrixMultiplication(kxVVector, kVxVector)
 	result := value.Matrix[0][0] / (1 + lambda)
 	return result
 }
 
+/**
+ * After selecting a point the kVVMatrix has to be normalized,
+ * meaning the influence of the selected point has to be removed
+ */
 func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points datamanager.Matrix, point []float64, lambda float64, sigma float64) datamanager.Matrix {
 	VxMatrix, _ := datamanager.CalculateKernelVector(points, point, sigma)
 	xVMatrix := datamanager.TransposeMatrix(VxMatrix)
