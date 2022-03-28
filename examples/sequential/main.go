@@ -10,11 +10,12 @@ func main() {
 	anotherDistribution := datamanager.CreateNormalDistribution(4, 0.1, 10)
 	distribution = append(distribution, anotherDistribution...)
 	another := datamanager.CreateNormalDistribution(8, 0.1, 10)
-
 	distribution = append(distribution, another...)
-	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
+	another = datamanager.CreateNormalDistribution(6, 0.1, 10)
+	distribution = append(distribution, another...)
 
-	test := transductive.SequentialOptimization(matrix, 3, 1.8, 1.5)
+	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
+	test := transductive.SequentialOptimization(matrix, 4, 1, 1)
 	distribution_test, _ := datamanager.ConvertMatrixToCoordinateSlice(test)
 	datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_sequential.png")
 }
