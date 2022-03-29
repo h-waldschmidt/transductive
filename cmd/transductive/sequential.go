@@ -42,9 +42,6 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 
 /**
  * Criteria used for finding the best points
- *
- * basically calculates the distance from all points to the given point
- * and takes the datamanager.euclideanNorm of the resulting vector
  */
 func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index int, sigma float64, lambda float64) float64 {
 	//initialize kVxMatrix
