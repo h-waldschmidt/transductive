@@ -2,6 +2,7 @@ package main
 
 import (
 	"transductive-experimental-design/cmd/datamanager"
+	"transductive-experimental-design/cmd/transductive"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 	distribution = append(distribution, another...)
 
 	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
-	//test := transductive.SequentialOptimization(matrix, 4, 1, 1)
+	test := transductive.AlternatingOptimization(matrix, 4, 1, 1)
 	distribution_test, _ := datamanager.ConvertMatrixToCoordinateSlice(test)
 	datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_sequential.png")
 }
