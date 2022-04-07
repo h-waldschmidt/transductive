@@ -10,7 +10,10 @@ func TestEuclideanDistance_Basic(t *testing.T) {
 	x := datamanager.Matrix{N: 1, M: 3, Matrix: [][]float64{{1, 2, 3}}}
 	y := datamanager.Matrix{N: 1, M: 3, Matrix: [][]float64{{2, 3, 4}}}
 
-	value, _ := datamanager.EuclideanDistance(x.Matrix[0], y.Matrix[0])
+	value, err := datamanager.EuclideanDistance(x.Matrix[0], y.Matrix[0])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
 	expected := math.Sqrt(3)
 
 	if value != expected {

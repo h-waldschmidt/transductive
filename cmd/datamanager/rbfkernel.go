@@ -2,6 +2,7 @@ package datamanager
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
 
@@ -16,7 +17,11 @@ func RbfKernel(x1 []float64, x2 []float64, sigma float64) (float64, error) {
 		return 0, fmt.Errorf("could not use RBFKernel")
 	}
 
-	result, _ := EuclideanDistance(x1, x2)
+	result, err := EuclideanDistance(x1, x2)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	result = math.Pow(result, 2) / (2 * sigma)
 	result = math.Exp(-result)
 

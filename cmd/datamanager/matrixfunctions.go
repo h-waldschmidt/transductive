@@ -2,6 +2,7 @@ package datamanager
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
 
@@ -21,7 +22,11 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matri
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j], _ = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
+			var err error
+			matrix.Matrix[i][j], err = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 
@@ -41,7 +46,11 @@ func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matr
 
 	// calculating all the values
 	for i := 0; i < pointsX.N; i++ {
-		vector.Matrix[0][i], _ = RbfKernel(pointsX.Matrix[i], point, sigma)
+		var err error
+		vector.Matrix[0][i], err = RbfKernel(pointsX.Matrix[i], point, sigma)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return vector, nil

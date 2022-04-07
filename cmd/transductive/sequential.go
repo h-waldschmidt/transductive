@@ -1,6 +1,7 @@
 package transductive
 
 import (
+	"log"
 	"math"
 	"transductive-experimental-design/cmd/datamanager"
 )
@@ -13,7 +14,10 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 		selectedPoints.Matrix[i] = make([]float64, selectedPoints.M)
 	}
 	//initialize the kVVMatrix
-	kVVMatrix, _ := datamanager.CalculateKernelMatrix(points, points, sigma)
+	kVVMatrix, err := datamanager.CalculateKernelMatrix(points, points, sigma)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for j := 0; j < numOfSelectedPoints; j++ {
 		//select x to maximize the criteria
@@ -45,7 +49,11 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 
 	kxVVector := datamanager.TransposeMatrix(kVxVector)
 
-	value, _ := datamanager.MatrixMultiplication(kxVVector, kVxVector)
+	value, err := datamanager.MatrixMultiplication(kxVVector, kVxVector)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	result := value.Matrix[0][0] / (1 + lambda)
 	return result
 }
@@ -53,12 +61,22 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 // After selecting a point the kVVMatrix has to be normalized,
 //meaning the influence of the selected point has to be removed
 func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points datamanager.Matrix, point []float64, lambda float64, sigma float64) datamanager.Matrix {
-	VxMatrix, _ := datamanager.CalculateKernelVector(points, point, sigma)
+	VxMatrix, err := datamanager.CalculateKernelVector(points, point, sigma)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	xVMatrix := datamanager.TransposeMatrix(VxMatrix)
-	VxxVMatrix, _ := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
+	VxxVMatrix, err := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	VxxVMatrix = datamanager.MatrixScalarMultiplication(VxxVMatrix, 1/(1+lambda))
-	kVVMatrix, _ = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
+	kVVMatrix, err = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return kVVMatrix
 }
