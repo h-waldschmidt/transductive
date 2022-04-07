@@ -9,3 +9,8 @@ type Matrix struct {
 	N, M   int
 	Matrix [][]float64
 }
+
+type Eigen struct {
+	values  []float64
+	vectors Matrix
+}
