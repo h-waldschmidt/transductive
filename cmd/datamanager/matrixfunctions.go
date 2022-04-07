@@ -176,3 +176,14 @@ func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
 	}
 	return matrix
 }
+
+func qrDecomposition(matrix Matrix) (Matrix, Matrix) {}
+
+// CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
+func CalculateEigen(matrix Matrix) (Eigen, error) {
+	var eigen Eigen
+	if matrix.N != matrix.N {
+		return eigen, fmt.Errorf("Given Matrix is not quadratic")
+	}
+	return eigen, nil
+}
