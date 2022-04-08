@@ -225,7 +225,23 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		if i == 0 {
+			q = q_t
+			r, err = MatrixMultiplication(q_t, matrix)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			q, err = MatrixMultiplication(q_t, q)
+			if err != nil {
+				log.Fatal(err)
+			}
 
+			r, err = MatrixMultiplication(q_t, r)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 	return q, r
 }
