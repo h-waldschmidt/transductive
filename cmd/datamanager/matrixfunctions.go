@@ -108,7 +108,7 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
-func TransposeMatrix(matrix Matrix) Matrix {
+func (matrix Matrix) TransposeMatrix() Matrix {
 	//initialize the transpose matrix
 	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
 	for i := 0; i < transpose.N; i++ {
@@ -167,7 +167,7 @@ func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 	return matrix, nil
 }
 
-func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
+func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
@@ -177,13 +177,13 @@ func MatrixScalarMultiplication(matrix Matrix, scalar float64) Matrix {
 	return matrix
 }
 
-func qrDecomposition(matrix Matrix) (Matrix, Matrix) {}
+func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {}
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
-func CalculateEigen(matrix Matrix) (Eigen, error) {
+func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	var eigen Eigen
-	if matrix.N != matrix.N {
-		return eigen, fmt.Errorf("Given Matrix is not quadratic")
+	if matrix.N != matrix.M {
+		return eigen, fmt.Errorf("given matrix is not quadratic")
 	}
 	return eigen, nil
 }

@@ -47,7 +47,7 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 	kVxVector := datamanager.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
 	kVxVector.Matrix[0] = kVVMatrix.Matrix[index]
 
-	kxVVector := datamanager.TransposeMatrix(kVxVector)
+	kxVVector := kVxVector.TransposeMatrix()
 
 	value, err := datamanager.MatrixMultiplication(kxVVector, kVxVector)
 	if err != nil {
@@ -66,13 +66,13 @@ func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points datamanager.Matrix,
 		log.Fatal(err)
 	}
 
-	xVMatrix := datamanager.TransposeMatrix(VxMatrix)
+	xVMatrix := VxMatrix.TransposeMatrix()
 	VxxVMatrix, err := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	VxxVMatrix = datamanager.MatrixScalarMultiplication(VxxVMatrix, 1/(1+lambda))
+	VxxVMatrix = VxxVMatrix.MatrixScalarMultiplication(1 / (1 + lambda))
 	kVVMatrix, err = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
 	if err != nil {
 		log.Fatal(err)
