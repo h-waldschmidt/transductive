@@ -183,6 +183,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	if matrix.N != matrix.M {
 		return eigen, fmt.Errorf("given matrix is not quadratic")
 	}
+
 	return eigen, nil
 }
 
@@ -267,7 +268,7 @@ func (vector Matrix) houseHolderTransformation() (Matrix, error) {
 
 func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
 	var q_t Matrix
-	if matrix.N != matrix.N {
+	if matrix.N != matrix.M {
 		return q_t, fmt.Errorf("given matrix is not quadratic")
 	}
 	q_t = matrix
