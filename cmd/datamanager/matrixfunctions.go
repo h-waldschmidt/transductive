@@ -186,9 +186,47 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	return eigen, nil
 }
 
+// calculating the QR-Decomposition using the Householder Transformation
+// Guide can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
+	//initialize all needed variables
 	var q, r Matrix
+	x := Matrix{1, matrix.M, make([][]float64, 1)}
+	e := Matrix{1, matrix.N, make([][]float64, 1)}
 
+	for i := 0; i < matrix.N; i++ {
+		x.Matrix[0] = matrix.Matrix[i]
+		e.Matrix[0] = matrix.Matrix[i]
+
+		alpha := EuclideanNorm(x.Matrix[0])
+		if matrix.Matrix[i][i] > 0 {
+			alpha *= -1
+		}
+
+		for j := 0; j < e.M; j++ {
+			if i == j {
+				e.Matrix[0][j] = 1
+			} else {
+				e.Matrix[0][j] = 0
+			}
+		}
+
+		for j := 0; j < e.M; j++ {
+			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
+		}
+		norm := EuclideanNorm(e.Matrix[0])
+		e = e.MatrixScalarMultiplication(norm)
+		q_min, err := e.houseHolderTransformation()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		q_t, err := q_min.calculateQ_T(i)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}
 	return q, r
 }
 
@@ -209,4 +247,26 @@ func (vector Matrix) houseHolderTransformation() (Matrix, error) {
 		matrix.Matrix[i][i]++
 	}
 	return matrix, nil
+}
+
+func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
+	var q_t Matrix
+	if matrix.N != matrix.N {
+		return q_t, fmt.Errorf("given matrix is not quadratic")
+	}
+	q_t = matrix
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			if i < k || j < k {
+				if i == j {
+					q_t.Matrix[i][j] = 1
+				} else {
+					q_t.Matrix[i][j] = 0
+				}
+			} else {
+				q_t.Matrix[i][j] = matrix.Matrix[i-k][j-k]
+			}
+		}
+	}
+	return q_t, nil
 }
