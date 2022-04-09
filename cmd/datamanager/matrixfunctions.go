@@ -178,7 +178,7 @@ func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
-//Guide can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
+// Explanation can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
 func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	var eigen Eigen
 	if matrix.N != matrix.M {
@@ -190,7 +190,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	q_i := q
 	var previous Matrix
 	var err error
-	// qr algorithm
+	// QR-Algorithm
 	for i := 0; i < 500; i++ {
 		previous = a_i
 		a_i, err = MatrixMultiplication(r, q)
@@ -204,6 +204,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 			log.Fatal(err)
 		}
 
+		// same tolerance used as numpy
 		tolerance := 1e-08
 
 		equal, err := compAllClose(a_i, previous, tolerance)
@@ -226,7 +227,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 }
 
 // calculating the QR-Decomposition using the Householder Transformation
-// Guide can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
+// Explanation can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 	//initialize all needed variables
 	var q, r Matrix
@@ -285,6 +286,8 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 	return q, r
 }
 
+// Householder Transformation
+// Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
 func (vector Matrix) houseHolderTransformation() (Matrix, error) {
 	var matrix Matrix
 	if vector.N != 1 {
@@ -304,6 +307,7 @@ func (vector Matrix) houseHolderTransformation() (Matrix, error) {
 	return matrix, nil
 }
 
+// helper function for QR-Composition
 func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
 	var q_t Matrix
 	if matrix.N != matrix.M {
