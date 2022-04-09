@@ -178,12 +178,25 @@ func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
+//Guide can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
 func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	var eigen Eigen
 	if matrix.N != matrix.M {
 		return eigen, fmt.Errorf("given matrix is not quadratic")
 	}
 
+	q, r := matrix.qrDecomposition()
+	x := matrix
+	var previous Matrix
+	var err error
+	for i := 0; i < 500; i++ {
+		previous = q
+		x, err = MatrixMultiplication(r, q)
+		if err != nil {
+			log.Fatal(err)
+		}
+		q, r = x.qrDecomposition()
+	}
 	return eigen, nil
 }
 
@@ -286,4 +299,23 @@ func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
 		}
 	}
 	return q_t, nil
+}
+
+// tests if two matrices are the same within the given tolerance
+// similar to this numpy function: https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
+func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) (bool, error) {
+	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
+		return false, fmt.Errorf("can't compare matrices, because they don't have the same dimensions")
+	}
+
+	var difference float64
+	for i := 0; i < matrix1.N; i++ {
+		for j := 0; j < matrix1.M; j++ {
+			difference = math.Abs(matrix1.Matrix[i][j] - matrix2.Matrix[i][j])
+			if difference > tolerance {
+				return false, nil
+			}
+		}
+	}
+	return true, nil
 }
