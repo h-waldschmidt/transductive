@@ -187,6 +187,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 
 	q, r := matrix.qrDecomposition()
 	a_i := matrix
+	q_i := q
 	var previous Matrix
 	var err error
 	// qr algorithm
@@ -197,6 +198,11 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 			log.Fatal(err)
 		}
 		q, r = a_i.qrDecomposition()
+
+		q_i, err = MatrixMultiplication(q_i, q)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		tolerance := 1e-08
 
@@ -209,7 +215,12 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 		}
 	}
 
-	// convert q and r into eigen datastructure
+	// convert a_i and q_i into eigen datastructure
+	eigen.vectors = q_i
+	eigen.values = make([]float64, a_i.N)
+	for i := 0; i < a_i.N; i++ {
+		eigen.values[i] = a_i.Matrix[i][i]
+	}
 
 	return eigen, nil
 }
