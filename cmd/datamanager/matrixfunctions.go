@@ -91,6 +91,17 @@ func SumNorm(x []float64) float64 {
 
 	return norm
 }
+
+func CreateDiagonalMatrix(x []float64) Matrix {
+	matrix := Matrix{len(x), len(x), make([][]float64, len(x))}
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i] = make([]float64, matrix.M)
+		matrix.Matrix[i][i] = x[i]
+	}
+
+	return matrix
+}
+
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// The inner dimensions need to be the same
