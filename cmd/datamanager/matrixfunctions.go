@@ -217,10 +217,10 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	}
 
 	// convert a_i and q_i into eigen datastructure
-	eigen.vectors = q_i
-	eigen.values = make([]float64, a_i.N)
+	eigen.Vectors = q_i
+	eigen.Values = make([]float64, a_i.N)
 	for i := 0; i < a_i.N; i++ {
-		eigen.values[i] = a_i.Matrix[i][i]
+		eigen.Values[i] = a_i.Matrix[i][i]
 	}
 
 	return eigen, nil

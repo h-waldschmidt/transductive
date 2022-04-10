@@ -11,6 +11,6 @@ type Matrix struct {
 }
 
 type Eigen struct {
-	values  []float64
-	vectors Matrix
+	Values  []float64
+	Vectors Matrix
 }
