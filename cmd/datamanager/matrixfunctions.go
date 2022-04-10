@@ -71,6 +71,7 @@ func EuclideanDistance(x []float64, y []float64) (float64, error) {
 	return math.Sqrt(distance), nil
 }
 
+// also known as 2-Norm
 func EuclideanNorm(x []float64) float64 {
 
 	var norm float64
@@ -81,6 +82,15 @@ func EuclideanNorm(x []float64) float64 {
 	return math.Sqrt(norm)
 }
 
+// also known as 1-Norm
+func SumNorm(x []float64) float64 {
+	var norm float64
+	for i := 0; i < len(x); i++ {
+		norm += x[i]
+	}
+
+	return norm
+}
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 
 	// The inner dimensions need to be the same
