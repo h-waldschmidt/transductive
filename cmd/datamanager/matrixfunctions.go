@@ -348,3 +348,48 @@ func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) (bool, erro
 	}
 	return true, nil
 }
+
+// calculates the multiplicative Inverse of the matrix,
+// using the Gauss Jordan Algorithm
+//
+// to keep the complexity in check, this function can only
+// be performed on symmetric matrices
+//
+// implementation based on this article: https://www.codesansar.com/numerical-methods/python-program-inverse-matrix-using-gauss-jordan.htm
+func (matrix Matrix) Inverse() (Matrix, error) {
+	var inverse Matrix
+	if matrix.N != matrix.M {
+		return inverse, fmt.Errorf("given matrix is not quadratic")
+	}
+
+	// augment the identity matrix of Order n
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix = append(matrix.Matrix, make([]float64, matrix.M))
+		matrix.Matrix[matrix.N+i][i] = 1
+	}
+
+	// calculate the inverse
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			if i != j {
+				ratio := matrix.Matrix[i][j] / matrix.Matrix[i][i]
+
+				for k := 0; k < matrix.N*2; k++ {
+					matrix.Matrix[k][j] = matrix.Matrix[k][j] - ratio*matrix.Matrix[k][i]
+				}
+			}
+		}
+	}
+	for i := 0; i < matrix.M; i++ {
+		divisor := matrix.Matrix[i][i]
+		for j := 0; j < matrix.N*2; j++ {
+			matrix.Matrix[j][i] = matrix.Matrix[j][i] / divisor
+		}
+	}
+	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
+	for i := 0; i < inverse.N; i++ {
+		inverse.Matrix[i] = matrix.Matrix[matrix.N+i]
+	}
+	// extract the inverse and return it
+	return inverse, nil
+}
