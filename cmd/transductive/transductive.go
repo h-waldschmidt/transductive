@@ -1,5 +1,0 @@
-package transductive
-
-func Transductive() {
-
-}
