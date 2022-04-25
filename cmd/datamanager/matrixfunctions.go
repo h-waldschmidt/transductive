@@ -13,11 +13,7 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matri
 		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
 	}
 
-	// initializing the matrix
-	matrix := Matrix{pointsY.N, pointsX.N, make([][]float64, pointsY.N)}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, pointsX.N)
-	}
+	matrix := NewMatrix(pointsY.N, pointsX.N)
 
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
@@ -40,9 +36,8 @@ func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matr
 		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
 	}
 
-	// initializing the vector(Matrix with M=1)
-	vector := Matrix{1, pointsX.N, make([][]float64, 1)}
-	vector.Matrix[0] = make([]float64, pointsX.N)
+	// initializing the vector(Matrix with N=1)
+	vector := NewMatrix(1, pointsX.N)
 
 	// calculating all the values
 	for i := 0; i < pointsX.N; i++ {
@@ -93,6 +88,7 @@ func SumNorm(x []float64) float64 {
 }
 
 func CreateDiagonalMatrix(x []float64) Matrix {
+	// not using the constructor for efficiency
 	matrix := Matrix{len(x), len(x), make([][]float64, len(x))}
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i] = make([]float64, matrix.M)
@@ -109,11 +105,7 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not multiply the matrices")
 	}
 
-	// initialize the matrix
-	matrix := Matrix{matrix1.M, matrix2.N, make([][]float64, matrix1.M)}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix.M)
-	}
+	matrix := NewMatrix(matrix1.M, matrix2.N)
 
 	// need to test if this is the cache efficient version of matrix multiplication
 	for i := 0; i < matrix1.M; i++ {
@@ -130,11 +122,7 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 }
 
 func (matrix Matrix) TransposeMatrix() Matrix {
-	//initialize the transpose matrix
-	transpose := Matrix{matrix.M, matrix.N, make([][]float64, matrix.M)}
-	for i := 0; i < transpose.N; i++ {
-		transpose.Matrix[i] = make([]float64, transpose.M)
-	}
+	transpose := NewMatrix(matrix.M, matrix.N)
 
 	for i := 0; i < transpose.N; i++ {
 		for j := 0; j < transpose.M; j++ {
@@ -152,11 +140,7 @@ func MatrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
 	}
 
-	//initialize the matrix
-	matrix := Matrix{matrix1.N, matrix1.M, make([][]float64, matrix1.N)}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix.M)
-	}
+	matrix := NewMatrix(matrix1.N, matrix1.M)
 
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
@@ -173,11 +157,7 @@ func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
 	}
 
-	//initialize the matrix
-	matrix := Matrix{matrix1.N, matrix1.M, make([][]float64, matrix1.N)}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix.M)
-	}
+	matrix := NewMatrix(matrix1.N, matrix1.M)
 
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
@@ -252,8 +232,8 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 	//initialize all needed variables
 	var q, r Matrix
-	x := Matrix{1, matrix.M, make([][]float64, 1)}
-	e := Matrix{1, matrix.N, make([][]float64, 1)}
+	x := NewMatrix(1, matrix.M)
+	e := NewMatrix(1, matrix.N)
 
 	for i := 0; i < matrix.N; i++ {
 		x.Matrix[0] = matrix.Matrix[i]
@@ -407,10 +387,13 @@ func (matrix Matrix) Inverse() (Matrix, error) {
 			matrix.Matrix[j][i] = matrix.Matrix[j][i] / divisor
 		}
 	}
+
+	// extract the inverse and return it
+	// not using the constructor for efficiency
 	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = matrix.Matrix[matrix.N+i]
 	}
-	// extract the inverse and return it
+
 	return inverse, nil
 }

@@ -34,10 +34,7 @@ func ConvertMatrixToCoordinateSlice(matrix Matrix) ([]Coordinate, error) {
 
 func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
 	//initialize matrix
-	matrix := Matrix{len(points), 2, make([][]float64, len(points))}
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i] = make([]float64, matrix.M)
-	}
+	matrix := NewMatrix(len(points), 2)
 
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i][0] = points[i].X1

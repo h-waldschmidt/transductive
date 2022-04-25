@@ -9,10 +9,8 @@ import (
 //Sequential Algorithm for Transductive Experimental Design
 //Searches in every iteration the best point useing the criterion
 func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
-	selectedPoints := datamanager.Matrix{numOfSelectedPoints, points.M, make([][]float64, numOfSelectedPoints)}
-	for i := 0; i < selectedPoints.N; i++ {
-		selectedPoints.Matrix[i] = make([]float64, selectedPoints.M)
-	}
+	selectedPoints := datamanager.NewMatrix(numOfSelectedPoints, points.M)
+
 	//initialize the kVVMatrix
 	kVVMatrix, err := datamanager.CalculateKernelMatrix(points, points, sigma)
 	if err != nil {
