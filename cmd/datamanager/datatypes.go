@@ -12,16 +12,20 @@ type Matrix struct {
 
 // constructor for Matrix
 // makes it easier to create the Matrix array
-func NewMatrix(n int, m int) *Matrix {
+//
+// TODO: Change return type to pointer
+// instead of returning an pointer, this function returns the object,
+// to not break some of the functions
+func NewMatrix(n int, m int) Matrix {
 	if n < 0 || m < 0 {
-		return nil
+		return Matrix{0, 0, make([][]float64, 0)}
 	}
 
 	matrix := Matrix{n, m, make([][]float64, n)}
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i] = make([]float64, matrix.M)
 	}
-	return &matrix
+	return matrix
 }
 
 type Eigen struct {
