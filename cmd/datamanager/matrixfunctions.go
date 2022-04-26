@@ -104,7 +104,7 @@ func (matrix Matrix) MatrixToSlice() ([]float64, error) {
 
 	// n and m have to be the same dimensions
 	if matrix.N != matrix.M {
-		return nil, fmt.Errorf("Dimensions of Matrix are not same")
+		return nil, fmt.Errorf("dimensions of Matrix are not same")
 	}
 
 	slice := make([]float64, matrix.N)
@@ -410,6 +410,25 @@ func (matrix Matrix) Inverse() (Matrix, error) {
 	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = matrix.Matrix[matrix.N+i]
+	}
+
+	return inverse, nil
+}
+
+// since the inverse of a diagonal matrix can easily be computed
+// by inverting each entry, this function can be used for efficiency
+func (matrix Matrix) InverseDiagonal() (Matrix, error) {
+	var inverse Matrix
+	if matrix.N != matrix.M {
+		return inverse, fmt.Errorf("dimensions of Matrix are not same")
+	}
+
+	inverse = NewMatrix(matrix.N, matrix.M)
+	// not using the constructor for efficiency
+	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
+	for i := 0; i < inverse.N; i++ {
+		inverse.Matrix[i] = make([]float64, inverse.M)
+		inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
 	}
 
 	return inverse, nil
