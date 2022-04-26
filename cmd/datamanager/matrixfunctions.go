@@ -87,7 +87,8 @@ func SumNorm(x []float64) float64 {
 	return norm
 }
 
-func CreateDiagonalMatrix(x []float64) Matrix {
+// convert slice to diagonal Matrix
+func SliceToMatrix(x []float64) Matrix {
 	// not using the constructor for efficiency
 	matrix := Matrix{len(x), len(x), make([][]float64, len(x))}
 	for i := 0; i < matrix.N; i++ {
@@ -96,6 +97,22 @@ func CreateDiagonalMatrix(x []float64) Matrix {
 	}
 
 	return matrix
+}
+
+// convert diagonal Matrix to slice
+func (matrix Matrix) MatrixToSlice() ([]float64, error) {
+
+	// n and m have to be the same dimensions
+	if matrix.N != matrix.M {
+		return nil, fmt.Errorf("Dimensions of Matrix are not same")
+	}
+
+	slice := make([]float64, matrix.N)
+	for i := 0; i < matrix.N; i++ {
+		slice[i] = matrix.Matrix[i][i]
+	}
+
+	return slice, nil
 }
 
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
