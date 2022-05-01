@@ -1,6 +1,7 @@
 package transductive
 
 import (
+	"fmt"
 	"log"
 	"transductive-experimental-design/cmd/datamanager"
 )
@@ -67,7 +68,9 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 		findAlpha(alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
 
 		// find optimal beta
+
 		// normalize Beta Matrix
+
 	}
 
 	// extract selected Points from Beta Matrix,
@@ -105,4 +108,24 @@ func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, 
 
 func findBeta() {}
 
-func normalizeBetaMatrix() {}
+// basically componentwise multiplication of two diagonal matrices
+// probably useless function
+func normalizeBetaMatrix(matrix1 datamanager.Matrix, matrix2 datamanager.Matrix) (datamanager.Matrix, error) {
+	var ans datamanager.Matrix
+	// matrix1 and matrix need to have same dimensions
+	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
+		return ans, fmt.Errorf("dimensions of the matrices are not the same")
+	}
+
+	// matrix1 and matrix2 need to be quadratic
+	if matrix1.N != matrix1.M || matrix2.N != matrix2.M {
+		return ans, fmt.Errorf("matrices are not quadratic")
+	}
+
+	ans = datamanager.NewMatrix(matrix1.N, matrix1.M)
+	for i := 0; i < matrix1.N; i++ {
+		ans.Matrix[i][i] = matrix1.Matrix[i][i] * matrix2.Matrix[i][i]
+	}
+
+	return ans, nil
+}
