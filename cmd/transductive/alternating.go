@@ -44,9 +44,9 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 
 	// TODO: try to init beta with different methods and Values
 	// initialize beta slice
-	betaSlice := make([]float64, points.N)
+	beta := make([]float64, points.N)
 	for i := 0; i < points.N; i++ {
-		betaSlice[i] = 0.1
+		beta[i] = 0.1
 	}
 
 	// TODO: try to init alphaMatrix with different methods and Values
@@ -61,7 +61,10 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 	//repeat until no major improvement
 	for i := 0; i < 50; i++ {
 		// for testing purposes I'm running the algorithm with fixed rounds
+
 		// find optimal alpha
+		betaDiagonal := datamanager.SliceToMatrix(beta)
+		findAlpha(alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
 
 		// find optimal beta
 		// normalize Beta Matrix
@@ -71,11 +74,33 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 	// by selecting the numOfSelectedPoints biggest points
 }
 
-func findAlpha(matrix datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors datamanager.Matrix) datamanager.Matrix {
-	newAlphaMatrix := matrix
-	for i := 0; i < matrix.N; i++ {
+func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors []datamanager.Matrix) datamanager.Matrix {
+	newAlphaMatrix := alphaMatrix
+	for i := 0; i < alphaMatrix.N; i++ {
+		cache, err := betaDiagonal.InverseDiagonal()
+		if err != nil {
+			log.Fatal(err)
+		}
 
+		cache, err = datamanager.MatrixMultiplication(cache, kkMatrices[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cache, err = datamanager.MatrixMultiplication(cache, kMatrix)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cache, err = datamanager.MatrixMultiplication(cache, eigenVectors[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		newAlphaMatrix.Matrix[i] = cache.Matrix[0]
 	}
+
+	return newAlphaMatrix
 }
 
 func findBeta() {}
