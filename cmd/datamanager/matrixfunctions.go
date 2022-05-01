@@ -235,7 +235,12 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 	}
 
 	// convert a_i and q_i into eigen datastructure
-	eigen.Vectors = q_i
+	eigen.Vectors = make([]Matrix, q_i.N)
+	cache := NewMatrix(1, q_i.M)
+	for i := 0; i < q_i.N; i++ {
+		cache.Matrix[0] = q_i.Matrix[i]
+		eigen.Vectors[i] = cache
+	}
 	eigen.Values = make([]float64, a_i.N)
 	for i := 0; i < a_i.N; i++ {
 		eigen.Values[i] = a_i.Matrix[i][i]

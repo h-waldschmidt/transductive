@@ -30,5 +30,5 @@ func NewMatrix(n int, m int) Matrix {
 
 type Eigen struct {
 	Values  []float64
-	Vectors Matrix
+	Vectors []Matrix
 }
