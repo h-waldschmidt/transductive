@@ -5,6 +5,8 @@ import (
 	"transductive-experimental-design/cmd/datamanager"
 )
 
+// TODO: create global variables
+
 func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
 
 	// create K = V * V^T matrix with V being the point Matrix
@@ -39,17 +41,42 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 			log.Fatal(err)
 		}
 	}
+
+	// TODO: try to init beta with different methods and Values
+	// initialize beta slice
+	betaSlice := make([]float64, points.N)
+	for i := 0; i < points.N; i++ {
+		betaSlice[i] = 0.1
+	}
+
+	// TODO: try to init alphaMatrix with different methods and Values
+	// initialize alpha matrix
+	alphaMatrix := datamanager.NewMatrix(len(eigen.Values), points.N)
+	for i := 0; i < alphaMatrix.N; i++ {
+		for j := 0; j < alphaMatrix.M; j++ {
+			alphaMatrix.Matrix[i][j] = 0.1
+		}
+	}
+
 	//repeat until no major improvement
-	// for testing purposes I'm running the algorithm a fixed time
-	// find optimal alpha
-	// find optimal beta
-	// normalize Beta Matrix
+	for i := 0; i < 50; i++ {
+		// for testing purposes I'm running the algorithm with fixed rounds
+		// find optimal alpha
+
+		// find optimal beta
+		// normalize Beta Matrix
+	}
 
 	// extract selected Points from Beta Matrix,
 	// by selecting the numOfSelectedPoints biggest points
 }
 
-func findAlpha() {}
+func findAlpha(matrix datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors datamanager.Matrix) datamanager.Matrix {
+	newAlphaMatrix := matrix
+	for i := 0; i < matrix.N; i++ {
+
+	}
+}
 
 func findBeta() {}
 

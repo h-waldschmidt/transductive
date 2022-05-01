@@ -6,6 +6,8 @@ import (
 	"transductive-experimental-design/cmd/datamanager"
 )
 
+// TODO: create global variables
+
 //Sequential Algorithm for Transductive Experimental Design
 //Searches in every iteration the best point useing the criterion
 func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
