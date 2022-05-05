@@ -7,7 +7,6 @@ import (
 )
 
 // TODO: create global variables
-
 func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
 
 	// create K = V * V^T matrix with V being the point Matrix
