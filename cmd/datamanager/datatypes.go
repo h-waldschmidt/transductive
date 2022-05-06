@@ -1,5 +1,7 @@
 package datamanager
 
+import "log"
+
 // only used for visualizing 2D Vectors
 type Coordinate struct{ X1, X2 float64 }
 
@@ -16,12 +18,12 @@ type Matrix struct {
 // TODO: Change return type to pointer
 // instead of returning an pointer, this function returns the object,
 // to not break some of the functions
-func NewMatrix(n int, m int) Matrix {
+func NewMatrix(n int, m int) *Matrix {
 	if n < 0 || m < 0 {
-		return Matrix{0, 0, make([][]float64, 0)}
+		log.Fatal("dimensions of matrix must be greater than 0")
 	}
 
-	matrix := Matrix{n, m, make([][]float64, n)}
+	matrix := &Matrix{n, m, make([][]float64, n)}
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i] = make([]float64, matrix.M)
 	}
