@@ -51,7 +51,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 
 		// find optimal alpha
 		betaDiagonal := datamanager.SliceToMatrix(beta)
-		findAlpha(alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
+		findAlpha(*alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
 
 		// find optimal beta
 
@@ -102,5 +102,5 @@ func normalizeBetaMatrix(matrix1 datamanager.Matrix, matrix2 datamanager.Matrix)
 		ans.Matrix[i][i] = matrix1.Matrix[i][i] * matrix2.Matrix[i][i]
 	}
 
-	return ans
+	return *ans
 }

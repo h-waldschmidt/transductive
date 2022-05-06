@@ -13,7 +13,7 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 	selectedPoints := datamanager.NewMatrix(numOfSelectedPoints, points.M)
 
 	//initialize the kVVMatrix
-	kVVMatrix := datamanager.CalculateKernelMatrix(points, points, sigma)
+	kVVMatrix := points.CalculateKernelMatrix(points, sigma)
 
 	for j := 0; j < numOfSelectedPoints; j++ {
 		//select x to maximize the criteria
@@ -34,7 +34,7 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 		// normalize the Kvv function by removing the influence of x
 		kVVMatrix = normalizeKvvMatrix(kVVMatrix, points, bestX, sigma, lambda)
 	}
-	return selectedPoints
+	return *selectedPoints
 }
 
 // Criteria used for finding the best points
@@ -54,12 +54,12 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 // After selecting a point the kVVMatrix has to be normalized,
 //meaning the influence of the selected point has to be removed
 func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points datamanager.Matrix, point []float64, lambda float64, sigma float64) datamanager.Matrix {
-	VxMatrix := datamanager.CalculateKernelVector(points, point, sigma)
+	VxMatrix := points.CalculateKernelVector(point, sigma)
 
 	xVMatrix := VxMatrix.TransposeMatrix()
 	VxxVMatrix := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
 
-	VxxVMatrix = VxxVMatrix.MatrixScalarMultiplication(1 / (1 + lambda))
+	VxxVMatrix.MatrixScalarMultiplication(1 / (1 + lambda))
 	kVVMatrix = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
 
 	return kVVMatrix

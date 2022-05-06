@@ -16,7 +16,7 @@ func main() {
 
 	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
 	test := transductive.SequentialOptimization(matrix, 4, 1, 1)
-	distribution_test := datamanager.ConvertMatrixToCoordinateSlice(test)
+	distribution_test := test.ConvertMatrixToCoordinateSlice()
 
 	datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_sequential.png")
 }
