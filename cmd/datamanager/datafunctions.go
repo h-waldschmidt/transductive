@@ -3,6 +3,7 @@ package datamanager
 import (
 	"fmt"
 	"image/color"
+	"log"
 	"math/rand"
 	"os"
 
@@ -11,17 +12,18 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func ConvertSliceToCoordinate(point []float64) (Coordinate, error) {
+func ConvertSliceToCoordinate(point []float64) Coordinate {
 	// point has to have dimension 2
 	if len(point) != 2 {
-		return Coordinate{}, fmt.Errorf("could not add the matrices")
+		log.Fatal("points do not have 2 dimensions")
 	}
-	return Coordinate{point[0], point[1]}, nil
+	return Coordinate{point[0], point[1]}
 }
-func ConvertMatrixToCoordinateSlice(matrix Matrix) ([]Coordinate, error) {
+
+func ConvertMatrixToCoordinateSlice(matrix Matrix) []Coordinate {
 	// point has to have dimension 2
 	if matrix.M != 2 {
-		return nil, fmt.Errorf("could not add the matrices")
+		log.Fatal("points do not have 2 dimensions")
 	}
 
 	slice := make([]Coordinate, matrix.N)
@@ -29,7 +31,7 @@ func ConvertMatrixToCoordinateSlice(matrix Matrix) ([]Coordinate, error) {
 		slice[i] = Coordinate{matrix.Matrix[i][0], matrix.Matrix[i][1]}
 	}
 
-	return slice, nil
+	return slice
 }
 
 func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
