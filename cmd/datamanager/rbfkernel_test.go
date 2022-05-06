@@ -10,10 +10,7 @@ func TestRBFKernel_Basic(t *testing.T) {
 	x := []float64{1, 1}
 	y := []float64{2, 2}
 
-	value, err := datamanager.RbfKernel(x, y, 1)
-	if err != nil {
-		t.Errorf("%v", err)
-	}
+	value := datamanager.RbfKernel(x, y, 1)
 	expected := math.Exp(-1)
 
 	if value != expected {

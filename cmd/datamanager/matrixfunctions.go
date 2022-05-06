@@ -1,16 +1,15 @@
 package datamanager
 
 import (
-	"fmt"
 	"log"
 	"math"
 )
 
-func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matrix, error) {
+func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
 	if pointsX.M != pointsY.M {
-		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
+		log.Fatal("could not use RBFKernel, points do not have the same dimensions")
 	}
 
 	matrix := NewMatrix(pointsY.N, pointsX.N)
@@ -18,22 +17,18 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) (Matri
 	// calculating all the values
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
-			var err error
-			matrix.Matrix[i][j], err = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
-			if err != nil {
-				log.Fatal(err)
-			}
+			matrix.Matrix[i][j] = RbfKernel(pointsX.Matrix[i], pointsY.Matrix[j], sigma)
 		}
 	}
 
-	return matrix, nil
+	return matrix
 }
 
-func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matrix, error) {
+func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
 	if pointsX.M != len(point) {
-		return Matrix{0, 0, make([][]float64, 0)}, fmt.Errorf("could not use RBFKernel")
+		log.Fatal("could not use RBFKernel, points do not have the same dimensions")
 	}
 
 	// initializing the vector(Matrix with N=1)
@@ -41,21 +36,17 @@ func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) (Matr
 
 	// calculating all the values
 	for i := 0; i < pointsX.N; i++ {
-		var err error
-		vector.Matrix[0][i], err = RbfKernel(pointsX.Matrix[i], point, sigma)
-		if err != nil {
-			log.Fatal(err)
-		}
+		vector.Matrix[0][i] = RbfKernel(pointsX.Matrix[i], point, sigma)
 	}
 
-	return vector, nil
+	return vector
 }
 
-func EuclideanDistance(x []float64, y []float64) (float64, error) {
+func EuclideanDistance(x []float64, y []float64) float64 {
 
 	//x and y need to be vectors and have the same dimensions
 	if len(x) != len(y) {
-		return 0, fmt.Errorf("could not calculate euclidean Distance")
+		log.Fatal("dimensions of the points do not match")
 	}
 
 	var distance float64
@@ -63,7 +54,7 @@ func EuclideanDistance(x []float64, y []float64) (float64, error) {
 		distance += math.Pow(x[i]-y[i], 2)
 	}
 
-	return math.Sqrt(distance), nil
+	return math.Sqrt(distance)
 }
 
 // also known as 2-Norm
@@ -100,11 +91,11 @@ func SliceToMatrix(x []float64) Matrix {
 }
 
 // convert diagonal Matrix to slice
-func (matrix Matrix) MatrixToSlice() ([]float64, error) {
+func (matrix Matrix) MatrixToSlice() []float64 {
 
 	// n and m have to be the same dimensions
 	if matrix.N != matrix.M {
-		return nil, fmt.Errorf("dimensions of Matrix are not same")
+		log.Fatal("matrix has to be quadratic")
 	}
 
 	slice := make([]float64, matrix.N)
@@ -112,14 +103,14 @@ func (matrix Matrix) MatrixToSlice() ([]float64, error) {
 		slice[i] = matrix.Matrix[i][i]
 	}
 
-	return slice, nil
+	return slice
 }
 
-func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
 
 	// The inner dimensions need to be the same
 	if matrix1.N != matrix2.M {
-		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not multiply the matrices")
+		log.Fatal("inner dimensions of matrices do not match")
 	}
 
 	matrix := NewMatrix(matrix1.M, matrix2.N)
@@ -135,7 +126,7 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		}
 	}
 
-	return matrix, nil
+	return matrix
 }
 
 func (matrix Matrix) TransposeMatrix() Matrix {
@@ -150,11 +141,11 @@ func (matrix Matrix) TransposeMatrix() Matrix {
 	return transpose
 }
 
-func MatrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixAddition(matrix1 Matrix, matrix2 Matrix) Matrix {
 
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
-		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
+		log.Fatal("dimensions of matrices do not match")
 	}
 
 	matrix := NewMatrix(matrix1.N, matrix1.M)
@@ -165,13 +156,13 @@ func MatrixAddition(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		}
 	}
 
-	return matrix, nil
+	return matrix
 }
 
-func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
+func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) Matrix {
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
-		return Matrix{0, 0, [][]float64{}}, fmt.Errorf("could not add the matrices")
+		log.Fatal("dimensions of matrices do not match")
 	}
 
 	matrix := NewMatrix(matrix1.N, matrix1.M)
@@ -182,7 +173,7 @@ func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) (Matrix, error) {
 		}
 	}
 
-	return matrix, nil
+	return matrix
 }
 
 func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
@@ -197,38 +188,29 @@ func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
 // Explanation can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
-func (matrix Matrix) CalculateEigen() (Eigen, error) {
+func (matrix Matrix) CalculateEigen() Eigen {
 	var eigen Eigen
 	if matrix.N != matrix.M {
-		return eigen, fmt.Errorf("given matrix is not quadratic")
+		log.Fatalf("matrix has to be quadratic")
 	}
 
 	q, r := matrix.qrDecomposition()
 	a_i := matrix
 	q_i := q
 	var previous Matrix
-	var err error
+
 	// QR-Algorithm
 	for i := 0; i < 500; i++ {
 		previous = a_i
-		a_i, err = MatrixMultiplication(r, q)
-		if err != nil {
-			log.Fatal(err)
-		}
+		a_i = MatrixMultiplication(r, q)
 		q, r = a_i.qrDecomposition()
 
-		q_i, err = MatrixMultiplication(q_i, q)
-		if err != nil {
-			log.Fatal(err)
-		}
+		q_i = MatrixMultiplication(q_i, q)
 
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
-		equal, err := compAllClose(a_i, previous, tolerance)
-		if err != nil {
-			log.Fatal(err)
-		}
+		equal := compAllClose(a_i, previous, tolerance)
 		if equal {
 			break
 		}
@@ -246,7 +228,7 @@ func (matrix Matrix) CalculateEigen() (Eigen, error) {
 		eigen.Values[i] = a_i.Matrix[i][i]
 	}
 
-	return eigen, nil
+	return eigen
 }
 
 // calculating the QR-Decomposition using the Householder Transformation
@@ -279,31 +261,16 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 		}
 		norm := EuclideanNorm(e.Matrix[0])
 		e = e.MatrixScalarMultiplication(norm)
-		q_min, err := e.houseHolderTransformation()
-		if err != nil {
-			log.Fatal(err)
-		}
+		q_min := e.houseHolderTransformation()
 
-		q_t, err := q_min.calculateQ_T(i)
-		if err != nil {
-			log.Fatal(err)
-		}
+		q_t := q_min.calculateQ_T(i)
 		if i == 0 {
 			q = q_t
-			r, err = MatrixMultiplication(q_t, matrix)
-			if err != nil {
-				log.Fatal(err)
-			}
+			r = MatrixMultiplication(q_t, matrix)
 		} else {
-			q, err = MatrixMultiplication(q_t, q)
-			if err != nil {
-				log.Fatal(err)
-			}
+			q = MatrixMultiplication(q_t, q)
 
-			r, err = MatrixMultiplication(q_t, r)
-			if err != nil {
-				log.Fatal(err)
-			}
+			r = MatrixMultiplication(q_t, r)
 		}
 	}
 	return q, r
@@ -311,30 +278,27 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 
 // Householder Transformation
 // Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
-func (vector Matrix) houseHolderTransformation() (Matrix, error) {
+func (vector Matrix) houseHolderTransformation() Matrix {
 	var matrix Matrix
 	if vector.N != 1 {
-		return matrix, fmt.Errorf("operation can only be performed on vector (matrix.N == 1)")
+		log.Fatal("operation can only be performed on vector")
 	}
-	var err error
+
 	vector_t := vector.TransposeMatrix()
-	matrix, err = MatrixMultiplication(vector, vector_t)
-	if err != nil {
-		log.Fatal(err)
-	}
+	matrix = MatrixMultiplication(vector, vector_t)
 
 	matrix = matrix.MatrixScalarMultiplication(2)
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i][i]++
 	}
-	return matrix, nil
+	return matrix
 }
 
 // helper function for QR-Composition
-func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
+func (matrix Matrix) calculateQ_T(k int) Matrix {
 	var q_t Matrix
 	if matrix.N != matrix.M {
-		return q_t, fmt.Errorf("given matrix is not quadratic")
+		log.Fatal("given matrix is not quadratic")
 	}
 	q_t = matrix
 	for i := 0; i < matrix.N; i++ {
@@ -350,14 +314,14 @@ func (matrix Matrix) calculateQ_T(k int) (Matrix, error) {
 			}
 		}
 	}
-	return q_t, nil
+	return q_t
 }
 
 // tests if two matrices are the same within the given tolerance
 // similar to this numpy function: https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
-func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) (bool, error) {
+func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) bool {
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
-		return false, fmt.Errorf("can't compare matrices, because they don't have the same dimensions")
+		log.Fatal("matrices do not have the same dimensions")
 	}
 
 	var difference float64
@@ -365,11 +329,11 @@ func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) (bool, erro
 		for j := 0; j < matrix1.M; j++ {
 			difference = math.Abs(matrix1.Matrix[i][j] - matrix2.Matrix[i][j])
 			if difference > tolerance {
-				return false, nil
+				return false
 			}
 		}
 	}
-	return true, nil
+	return true
 }
 
 // calculates the multiplicative Inverse of the matrix,
@@ -379,10 +343,10 @@ func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) (bool, erro
 // be performed on symmetric matrices
 //
 // implementation based on this article: https://www.codesansar.com/numerical-methods/python-program-inverse-matrix-using-gauss-jordan.htm
-func (matrix Matrix) Inverse() (Matrix, error) {
+func (matrix Matrix) Inverse() Matrix {
 	var inverse Matrix
 	if matrix.N != matrix.M {
-		return inverse, fmt.Errorf("given matrix is not quadratic")
+		log.Fatal("given matrix is not quadratic")
 	}
 
 	// augment the identity matrix of Order n
@@ -417,15 +381,15 @@ func (matrix Matrix) Inverse() (Matrix, error) {
 		inverse.Matrix[i] = matrix.Matrix[matrix.N+i]
 	}
 
-	return inverse, nil
+	return inverse
 }
 
 // since the inverse of a diagonal matrix can easily be computed
 // by inverting each entry, this function can be used for efficiency
-func (matrix Matrix) InverseDiagonal() (Matrix, error) {
+func (matrix Matrix) InverseDiagonal() Matrix {
 	var inverse Matrix
 	if matrix.N != matrix.M {
-		return inverse, fmt.Errorf("dimensions of Matrix are not same")
+		log.Fatal("dimensions of matrices do not match")
 	}
 
 	inverse = NewMatrix(matrix.N, matrix.M)
@@ -436,5 +400,5 @@ func (matrix Matrix) InverseDiagonal() (Matrix, error) {
 		inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
 	}
 
-	return inverse, nil
+	return inverse
 }

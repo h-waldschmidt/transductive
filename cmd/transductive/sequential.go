@@ -1,7 +1,6 @@
 package transductive
 
 import (
-	"log"
 	"math"
 	"transductive-experimental-design/cmd/datamanager"
 )
@@ -14,10 +13,7 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 	selectedPoints := datamanager.NewMatrix(numOfSelectedPoints, points.M)
 
 	//initialize the kVVMatrix
-	kVVMatrix, err := datamanager.CalculateKernelMatrix(points, points, sigma)
-	if err != nil {
-		log.Fatal(err)
-	}
+	kVVMatrix := datamanager.CalculateKernelMatrix(points, points, sigma)
 
 	for j := 0; j < numOfSelectedPoints; j++ {
 		//select x to maximize the criteria
@@ -49,10 +45,7 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 
 	kxVVector := kVxVector.TransposeMatrix()
 
-	value, err := datamanager.MatrixMultiplication(kxVVector, kVxVector)
-	if err != nil {
-		log.Fatal(err)
-	}
+	value := datamanager.MatrixMultiplication(kxVVector, kVxVector)
 
 	result := value.Matrix[0][0] / (1 + lambda)
 	return result
@@ -61,22 +54,13 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 // After selecting a point the kVVMatrix has to be normalized,
 //meaning the influence of the selected point has to be removed
 func normalizeKvvMatrix(kVVMatrix datamanager.Matrix, points datamanager.Matrix, point []float64, lambda float64, sigma float64) datamanager.Matrix {
-	VxMatrix, err := datamanager.CalculateKernelVector(points, point, sigma)
-	if err != nil {
-		log.Fatal(err)
-	}
+	VxMatrix := datamanager.CalculateKernelVector(points, point, sigma)
 
 	xVMatrix := VxMatrix.TransposeMatrix()
-	VxxVMatrix, err := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
-	if err != nil {
-		log.Fatal(err)
-	}
+	VxxVMatrix := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
 
 	VxxVMatrix = VxxVMatrix.MatrixScalarMultiplication(1 / (1 + lambda))
-	kVVMatrix, err = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
-	if err != nil {
-		log.Fatal(err)
-	}
+	kVVMatrix = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
 
 	return kVVMatrix
 }

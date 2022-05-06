@@ -1,7 +1,6 @@
 package transductive
 
 import (
-	"fmt"
 	"log"
 	"transductive-experimental-design/cmd/datamanager"
 )
@@ -11,22 +10,13 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 
 	// create K = V * V^T matrix with V being the point Matrix
 	points_T := points.TransposeMatrix()
-	k, err := datamanager.MatrixMultiplication(points, points_T)
-	if err != nil {
-		log.Fatal(err)
-	}
+	k := datamanager.MatrixMultiplication(points, points_T)
 
 	// eigen components of K matrix
-	eigen, err := k.CalculateEigen()
-	if err != nil {
-		log.Fatal(err)
-	}
+	eigen := k.CalculateEigen()
 
 	// create K*K matrix
-	kk, err := datamanager.MatrixMultiplication(k, k)
-	if err != nil {
-		log.Fatal(err)
-	}
+	kk := datamanager.MatrixMultiplication(k, k)
 
 	// create all the (K*K + lambda* eigen_value_i)^-1 matrices
 	// those are needed to find all the alpha_i
@@ -36,10 +26,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 		for j := 0; j < kk_slice[i].M; j++ {
 			kk_slice[i].Matrix[j][j] += lambda * eigen.Values[i]
 		}
-		kk_slice[i], err = kk_slice[i].Inverse()
-		if err != nil {
-			log.Fatal(err)
-		}
+		kk_slice[i] = kk_slice[i].Inverse()
 	}
 
 	// TODO: try to init beta with different methods and Values
@@ -81,25 +68,13 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors []datamanager.Matrix) datamanager.Matrix {
 	newAlphaMatrix := alphaMatrix
 	for i := 0; i < alphaMatrix.N; i++ {
-		cache, err := betaDiagonal.InverseDiagonal()
-		if err != nil {
-			log.Fatal(err)
-		}
+		cache := betaDiagonal.InverseDiagonal()
 
-		cache, err = datamanager.MatrixMultiplication(cache, kkMatrices[i])
-		if err != nil {
-			log.Fatal(err)
-		}
+		cache = datamanager.MatrixMultiplication(cache, kkMatrices[i])
 
-		cache, err = datamanager.MatrixMultiplication(cache, kMatrix)
-		if err != nil {
-			log.Fatal(err)
-		}
+		cache = datamanager.MatrixMultiplication(cache, kMatrix)
 
-		cache, err = datamanager.MatrixMultiplication(cache, eigenVectors[i])
-		if err != nil {
-			log.Fatal(err)
-		}
+		cache = datamanager.MatrixMultiplication(cache, eigenVectors[i])
 
 		newAlphaMatrix.Matrix[i] = cache.Matrix[0]
 	}
@@ -111,22 +86,21 @@ func findBeta() {}
 
 // basically componentwise multiplication of two diagonal matrices
 // probably useless function
-func normalizeBetaMatrix(matrix1 datamanager.Matrix, matrix2 datamanager.Matrix) (datamanager.Matrix, error) {
-	var ans datamanager.Matrix
+func normalizeBetaMatrix(matrix1 datamanager.Matrix, matrix2 datamanager.Matrix) datamanager.Matrix {
 	// matrix1 and matrix need to have same dimensions
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
-		return ans, fmt.Errorf("dimensions of the matrices are not the same")
+		log.Fatal("dimensions of the matrices are not the same")
 	}
 
 	// matrix1 and matrix2 need to be quadratic
 	if matrix1.N != matrix1.M || matrix2.N != matrix2.M {
-		return ans, fmt.Errorf("matrices are not quadratic")
+		log.Fatal("matrices are not quadratic")
 	}
 
-	ans = datamanager.NewMatrix(matrix1.N, matrix1.M)
+	ans := datamanager.NewMatrix(matrix1.N, matrix1.M)
 	for i := 0; i < matrix1.N; i++ {
 		ans.Matrix[i][i] = matrix1.Matrix[i][i] * matrix2.Matrix[i][i]
 	}
 
-	return ans, nil
+	return ans
 }
