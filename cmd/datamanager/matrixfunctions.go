@@ -186,14 +186,14 @@ func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) {
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
 // Explanation can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
-func (matrix Matrix) CalculateEigen() Eigen {
+func (matrix *Matrix) CalculateEigen() Eigen {
 	var eigen Eigen
 	if matrix.N != matrix.M {
 		log.Fatalf("matrix has to be quadratic")
 	}
 
 	q, r := matrix.qrDecomposition()
-	a_i := matrix
+	a_i := *matrix
 	q_i := q
 	var previous Matrix
 
@@ -231,7 +231,7 @@ func (matrix Matrix) CalculateEigen() Eigen {
 
 // calculating the QR-Decomposition using the Householder Transformation
 // Explanation can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
-func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
+func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
 	//initialize all needed variables
 	var q, r Matrix
 	x := NewMatrix(1, matrix.M)
@@ -264,7 +264,7 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 		q_t := q_min.calculateQ_T(i)
 		if i == 0 {
 			q = q_t
-			r = MatrixMultiplication(q_t, matrix)
+			r = MatrixMultiplication(q_t, *matrix)
 		} else {
 			q = MatrixMultiplication(q_t, q)
 
@@ -276,14 +276,13 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 
 // Householder Transformation
 // Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
-func (vector Matrix) houseHolderTransformation() Matrix {
-	var matrix Matrix
+func (vector *Matrix) houseHolderTransformation() Matrix {
 	if vector.N != 1 {
 		log.Fatal("operation can only be performed on vector")
 	}
 
 	vector_t := vector.TransposeMatrix()
-	matrix = MatrixMultiplication(vector, vector_t)
+	matrix := MatrixMultiplication(*vector, vector_t)
 
 	matrix.MatrixScalarMultiplication(2)
 	for i := 0; i < matrix.N; i++ {
@@ -293,12 +292,11 @@ func (vector Matrix) houseHolderTransformation() Matrix {
 }
 
 // helper function for QR-Composition
-func (matrix Matrix) calculateQ_T(k int) Matrix {
-	var q_t Matrix
+func (matrix *Matrix) calculateQ_T(k int) Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
 	}
-	q_t = matrix
+	q_t := *matrix
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
 			if i < k || j < k {
@@ -342,7 +340,6 @@ func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) bool {
 //
 // implementation based on this article: https://www.codesansar.com/numerical-methods/python-program-inverse-matrix-using-gauss-jordan.htm
 func (matrix Matrix) Inverse() Matrix {
-	var inverse Matrix
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
 	}
@@ -374,7 +371,7 @@ func (matrix Matrix) Inverse() Matrix {
 
 	// extract the inverse and return it
 	// not using the constructor for efficiency
-	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
+	inverse := Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = matrix.Matrix[matrix.N+i]
 	}
@@ -384,15 +381,13 @@ func (matrix Matrix) Inverse() Matrix {
 
 // since the inverse of a diagonal matrix can easily be computed
 // by inverting each entry, this function can be used for efficiency
-func (matrix Matrix) InverseDiagonal() Matrix {
-	var inverse Matrix
+func (matrix *Matrix) InverseDiagonal() Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("dimensions of matrices do not match")
 	}
 
-	inverse = *NewMatrix(matrix.N, matrix.M)
 	// not using the constructor for efficiency
-	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
+	inverse := Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = make([]float64, inverse.M)
 		inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
