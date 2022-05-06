@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix {
+func (pointsX *Matrix) CalculateKernelMatrix(pointsY Matrix, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
 	if pointsX.M != pointsY.M {
@@ -21,10 +21,10 @@ func CalculateKernelMatrix(pointsX Matrix, pointsY Matrix, sigma float64) Matrix
 		}
 	}
 
-	return matrix
+	return *matrix
 }
 
-func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) Matrix {
+func (pointsX *Matrix) CalculateKernelVector(point []float64, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
 	if pointsX.M != len(point) {
@@ -39,7 +39,7 @@ func CalculateKernelVector(pointsX Matrix, point []float64, sigma float64) Matri
 		vector.Matrix[0][i] = RbfKernel(pointsX.Matrix[i], point, sigma)
 	}
 
-	return vector
+	return *vector
 }
 
 func EuclideanDistance(x []float64, y []float64) float64 {
@@ -91,7 +91,7 @@ func SliceToMatrix(x []float64) Matrix {
 }
 
 // convert diagonal Matrix to slice
-func (matrix Matrix) MatrixToSlice() []float64 {
+func (matrix *Matrix) MatrixToSlice() []float64 {
 
 	// n and m have to be the same dimensions
 	if matrix.N != matrix.M {
@@ -126,10 +126,10 @@ func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
 		}
 	}
 
-	return matrix
+	return *matrix
 }
 
-func (matrix Matrix) TransposeMatrix() Matrix {
+func (matrix *Matrix) TransposeMatrix() Matrix {
 	transpose := NewMatrix(matrix.M, matrix.N)
 
 	for i := 0; i < transpose.N; i++ {
@@ -138,7 +138,7 @@ func (matrix Matrix) TransposeMatrix() Matrix {
 		}
 	}
 
-	return transpose
+	return *transpose
 }
 
 func MatrixAddition(matrix1 Matrix, matrix2 Matrix) Matrix {
@@ -156,7 +156,7 @@ func MatrixAddition(matrix1 Matrix, matrix2 Matrix) Matrix {
 		}
 	}
 
-	return matrix
+	return *matrix
 }
 
 func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) Matrix {
@@ -173,17 +173,15 @@ func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) Matrix {
 		}
 	}
 
-	return matrix
+	return *matrix
 }
 
-func (matrix Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
-
+func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) {
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
 			matrix.Matrix[i][j] *= scalar
 		}
 	}
-	return matrix
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
@@ -221,7 +219,7 @@ func (matrix Matrix) CalculateEigen() Eigen {
 	cache := NewMatrix(1, q_i.M)
 	for i := 0; i < q_i.N; i++ {
 		cache.Matrix[0] = q_i.Matrix[i]
-		eigen.Vectors[i] = cache
+		eigen.Vectors[i] = *cache
 	}
 	eigen.Values = make([]float64, a_i.N)
 	for i := 0; i < a_i.N; i++ {
@@ -260,7 +258,7 @@ func (matrix Matrix) qrDecomposition() (Matrix, Matrix) {
 			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
 		}
 		norm := EuclideanNorm(e.Matrix[0])
-		e = e.MatrixScalarMultiplication(norm)
+		e.MatrixScalarMultiplication(norm)
 		q_min := e.houseHolderTransformation()
 
 		q_t := q_min.calculateQ_T(i)
@@ -287,7 +285,7 @@ func (vector Matrix) houseHolderTransformation() Matrix {
 	vector_t := vector.TransposeMatrix()
 	matrix = MatrixMultiplication(vector, vector_t)
 
-	matrix = matrix.MatrixScalarMultiplication(2)
+	matrix.MatrixScalarMultiplication(2)
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i][i]++
 	}
@@ -392,7 +390,7 @@ func (matrix Matrix) InverseDiagonal() Matrix {
 		log.Fatal("dimensions of matrices do not match")
 	}
 
-	inverse = NewMatrix(matrix.N, matrix.M)
+	inverse = *NewMatrix(matrix.N, matrix.M)
 	// not using the constructor for efficiency
 	inverse = Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {

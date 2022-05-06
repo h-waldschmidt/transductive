@@ -20,7 +20,7 @@ func ConvertSliceToCoordinate(point []float64) Coordinate {
 	return Coordinate{point[0], point[1]}
 }
 
-func ConvertMatrixToCoordinateSlice(matrix Matrix) []Coordinate {
+func (matrix *Matrix) ConvertMatrixToCoordinateSlice() []Coordinate {
 	// point has to have dimension 2
 	if matrix.M != 2 {
 		log.Fatal("points do not have 2 dimensions")
@@ -43,7 +43,7 @@ func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
 		matrix.Matrix[i][1] = points[i].X2
 	}
 
-	return matrix
+	return *matrix
 }
 
 func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
