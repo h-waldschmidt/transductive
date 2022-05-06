@@ -74,6 +74,8 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 
 	// extract selected Points from Beta Matrix,
 	// by selecting the numOfSelectedPoints biggest points
+	var ans datamanager.Matrix
+	return ans
 }
 
 func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors []datamanager.Matrix) datamanager.Matrix {
