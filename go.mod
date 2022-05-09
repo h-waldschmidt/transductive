@@ -5,6 +5,8 @@ go 1.17
 require (
 	gioui.org v0.0.0-20210308172011-57750fc8a0a6 // indirect
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+	github.com/badgerodon/lalg v0.0.0-20131221025232-d98d02968c5b // indirect
+	github.com/badgerodon/quadprog v0.0.0-20170722135126-99da70fa15d4 // indirect
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
