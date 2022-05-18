@@ -10,14 +10,14 @@ import (
 
 // Use the following library https://github.com/badgerodon/quadprog as current solution
 // might write my own byndings to https://doc.cgal.org/latest/QP_solver/index.html
-func SolveQP(D datamanager.Matrix, d datamanager.Matrix, A1 datamanager.Matrix, b1 datamanager.Matrix, A2 datamanager.Matrix, b2 datamanager.Matrix) datamanager.Matrix {
+func SolveQP(D, d datamanager.Matrix) datamanager.Matrix {
 	// convert Matrices from this package into lalg Matrices and Vectors
 	lD := convertDMatrixToLMatrix(D)
 	ld := convertDMatrixToLVector(d)
-	lA1 := convertDMatrixToLMatrix(A1)
-	lb1 := convertDMatrixToLVector(b1)
-	lA2 := convertDMatrixToLMatrix(A2)
-	lb2 := convertDMatrixToLVector(b2)
+	lA1 := lalg.NewIdentity(0)
+	lb1 := lalg.NewVector(0)
+	lA2 := lalg.NewIdentity(D.N)
+	lb2 := lalg.NewVector(D.N)
 
 	lAns, err := quadprog.Solve(lD, ld, lA1, lb1, lA2, lb2)
 	if err != nil {
