@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"transductive-experimental-design/cmd/datamanager"
 	"transductive-experimental-design/cmd/transductive"
 )
@@ -17,6 +18,8 @@ func main() {
 	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
 	test := transductive.SequentialOptimization(matrix, 4, 1, 1)
 	distribution_test := test.ConvertMatrixToCoordinateSlice()
-
-	datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_sequential.png")
+	err := datamanager.PlotSelectedPoints(distribution, distribution_test, "plots/test_sequential.png")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
