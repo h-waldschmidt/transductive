@@ -79,7 +79,7 @@ func SumNorm(x []float64) float64 {
 }
 
 // convert slice to diagonal Matrix
-func SliceToMatrix(x []float64) Matrix {
+func SliceToDiagonalMatrix(x []float64) Matrix {
 	// not using the constructor for efficiency
 	matrix := Matrix{len(x), len(x), make([][]float64, len(x))}
 	for i := 0; i < matrix.N; i++ {
@@ -91,9 +91,7 @@ func SliceToMatrix(x []float64) Matrix {
 }
 
 // convert diagonal Matrix to slice
-func (matrix *Matrix) MatrixToSlice() []float64 {
-
-	// n and m have to be the same dimensions
+func (matrix *Matrix) DiagonalMatrixToSlice() []float64 {
 	if matrix.N != matrix.M {
 		log.Fatal("matrix has to be quadratic")
 	}
@@ -104,6 +102,27 @@ func (matrix *Matrix) MatrixToSlice() []float64 {
 	}
 
 	return slice
+}
+
+func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
+	if matrix.N != 1 {
+		log.Fatal("matrix needs to only consist of 1 column")
+	}
+
+	ans := NewMatrix(matrix.M, matrix.M)
+	for i := 0; i < matrix.N; i++ {
+		ans.Matrix[i][i] = matrix.Matrix[1][i]
+	}
+	return *ans
+}
+
+func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
+
+	ans := NewMatrix(1, matrix.M)
+	for i := 0; i < matrix.N; i++ {
+		ans.Matrix[1][i] = matrix.Matrix[i][i]
+	}
+	return *ans
 }
 
 func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
