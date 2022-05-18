@@ -31,9 +31,9 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 
 	// TODO: try to init beta with different methods and Values
 	// initialize beta slice
-	beta := make([]float64, points.N)
+	beta := datamanager.NewMatrix(1, points.N)
 	for i := 0; i < points.N; i++ {
-		beta[i] = 0.1
+		beta.Matrix[1][i] = 0.1
 	}
 
 	// TODO: try to init alphaMatrix with different methods and Values
@@ -50,7 +50,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 		// for testing purposes I'm running the algorithm with fixed rounds
 
 		// find optimal alpha
-		betaDiagonal := datamanager.SliceToMatrix(beta)
+		betaDiagonal := beta.VectorToDiagonalMatrix()
 		findAlpha(*alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
 
 		// find optimal beta
@@ -81,8 +81,6 @@ func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, 
 
 	return newAlphaMatrix
 }
-
-func findBeta() {}
 
 // basically componentwise multiplication of two diagonal matrices
 // probably useless function
