@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+// Applies the Kernel function to every component of the matrix
 func (pointsX *Matrix) CalculateKernelMatrix(pointsY Matrix, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
@@ -24,6 +25,7 @@ func (pointsX *Matrix) CalculateKernelMatrix(pointsY Matrix, sigma float64) Matr
 	return *matrix
 }
 
+// Applies the Kernel function on every component of the vector
 func (pointsX *Matrix) CalculateKernelVector(point []float64, sigma float64) Matrix {
 
 	//x and y need to have the same dimensions
@@ -42,6 +44,7 @@ func (pointsX *Matrix) CalculateKernelVector(point []float64, sigma float64) Mat
 	return *vector
 }
 
+// Calculates the Euclidian Distance between two vectors
 func EuclideanDistance(x, y []float64) float64 {
 
 	//x and y need to be vectors and have the same dimensions
@@ -57,6 +60,7 @@ func EuclideanDistance(x, y []float64) float64 {
 	return math.Sqrt(distance)
 }
 
+// Calculates Euclidian Norm of Vector
 // also known as 2-Norm
 func EuclideanNorm(x []float64) float64 {
 
@@ -68,6 +72,7 @@ func EuclideanNorm(x []float64) float64 {
 	return math.Sqrt(norm)
 }
 
+// Calculates Sum Norm of Vector
 // also known as 1-Norm
 func SumNorm(x []float64) float64 {
 	var norm float64
@@ -104,6 +109,7 @@ func (matrix *Matrix) DiagonalMatrixToSlice() []float64 {
 	return slice
 }
 
+// converts a Matrix with N=1 to a Diagonal Matrix
 func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
 	if matrix.N != 1 {
 		log.Fatal("matrix needs to only consist of 1 column")
@@ -116,6 +122,7 @@ func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
 	return *ans
 }
 
+// Converts a Diagonal Matrix to a Matrix with N=1
 func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
 
 	ans := NewMatrix(1, matrix.M)
@@ -125,6 +132,7 @@ func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
 	return *ans
 }
 
+// Basic Matrix Multiplication
 func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 
 	// The inner dimensions need to be the same
@@ -148,6 +156,7 @@ func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 	return *matrix
 }
 
+// Transpose the given matrix
 func (matrix *Matrix) TransposeMatrix() Matrix {
 	transpose := NewMatrix(matrix.M, matrix.N)
 
@@ -160,6 +169,7 @@ func (matrix *Matrix) TransposeMatrix() Matrix {
 	return *transpose
 }
 
+// add the matrices component wise
 func MatrixAddition(matrix1, matrix2 Matrix) Matrix {
 
 	// the dimensions of the matrices have to match
@@ -178,6 +188,7 @@ func MatrixAddition(matrix1, matrix2 Matrix) Matrix {
 	return *matrix
 }
 
+// subtract the matrices component wise
 func MatrixSubtraction(matrix1, matrix2 Matrix) Matrix {
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
@@ -195,6 +206,7 @@ func MatrixSubtraction(matrix1, matrix2 Matrix) Matrix {
 	return *matrix
 }
 
+// Multiply all elements of the matrix with the scalar
 func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) {
 	for i := 0; i < matrix.N; i++ {
 		for j := 0; j < matrix.M; j++ {
@@ -310,7 +322,7 @@ func (vector *Matrix) houseHolderTransformation() Matrix {
 	return matrix
 }
 
-// helper function for QR-Composition
+// helper function for QR-Decomposition
 func (matrix *Matrix) calculateQ_T(k int) Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
@@ -398,6 +410,7 @@ func (matrix Matrix) Inverse() Matrix {
 	return inverse
 }
 
+// Calculate the Inverse of a DiagonalMatrix
 // since the inverse of a diagonal matrix can easily be computed
 // by inverting each entry, this function can be used for efficiency
 func (matrix *Matrix) InverseDiagonal() Matrix {
