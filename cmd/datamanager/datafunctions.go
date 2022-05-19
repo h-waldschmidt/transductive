@@ -46,7 +46,7 @@ func ConvertCoordinatesToMatrix(points []Coordinate) Matrix {
 	return *matrix
 }
 
-func CreateNormalDistribution(mean float64, standardDeviation float64, numberOfItems int) []Coordinate {
+func CreateNormalDistribution(mean, standardDeviation float64, numberOfItems int) []Coordinate {
 	var distribution []Coordinate
 
 	for i := 0; i < numberOfItems; i++ {
@@ -92,7 +92,7 @@ func PlotDistribution(items []Coordinate, path string) error {
 	return nil
 }
 
-func PlotSelectedPoints(items []Coordinate, selectedPoints []Coordinate, path string) error {
+func PlotSelectedPoints(items, selectedPoints []Coordinate, path string) error {
 	var itemsXYs plotter.XYs
 	for _, xy := range items {
 		itemsXYs = append(itemsXYs, struct{ X, Y float64 }{xy.X1, xy.X2})

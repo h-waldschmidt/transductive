@@ -6,7 +6,7 @@ import (
 )
 
 // TODO: create global variables
-func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda float64, sigma float64) datamanager.Matrix {
+func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda, sigma float64) datamanager.Matrix {
 
 	// create K = V * V^T matrix with V being the point Matrix
 	points_T := points.TransposeMatrix()
@@ -65,7 +65,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 	return ans
 }
 
-func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, kMatrix datamanager.Matrix, kkMatrices []datamanager.Matrix, eigenVectors []datamanager.Matrix) datamanager.Matrix {
+func findAlpha(alphaMatrix, betaDiagonal, kMatrix datamanager.Matrix, kkMatrices, eigenVectors []datamanager.Matrix) datamanager.Matrix {
 	newAlphaMatrix := alphaMatrix
 	for i := 0; i < alphaMatrix.N; i++ {
 		cache := betaDiagonal.InverseDiagonal()
@@ -84,7 +84,7 @@ func findAlpha(alphaMatrix datamanager.Matrix, betaDiagonal datamanager.Matrix, 
 
 // basically componentwise multiplication of two diagonal matrices
 // probably useless function
-func normalizeBetaMatrix(matrix1 datamanager.Matrix, matrix2 datamanager.Matrix) datamanager.Matrix {
+func normalizeBetaMatrix(matrix1, matrix2 datamanager.Matrix) datamanager.Matrix {
 	// matrix1 and matrix need to have same dimensions
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("dimensions of the matrices are not the same")

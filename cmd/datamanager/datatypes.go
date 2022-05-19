@@ -18,7 +18,7 @@ type Matrix struct {
 // TODO: Change return type to pointer
 // instead of returning an pointer, this function returns the object,
 // to not break some of the functions
-func NewMatrix(n int, m int) *Matrix {
+func NewMatrix(n, m int) *Matrix {
 	if n < 0 || m < 0 {
 		log.Fatal("dimensions of matrix must be greater than 0")
 	}

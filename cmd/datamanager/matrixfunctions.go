@@ -42,7 +42,7 @@ func (pointsX *Matrix) CalculateKernelVector(point []float64, sigma float64) Mat
 	return *vector
 }
 
-func EuclideanDistance(x []float64, y []float64) float64 {
+func EuclideanDistance(x, y []float64) float64 {
 
 	//x and y need to be vectors and have the same dimensions
 	if len(x) != len(y) {
@@ -125,7 +125,7 @@ func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
 	return *ans
 }
 
-func MatrixMultiplication(matrix1 Matrix, matrix2 Matrix) Matrix {
+func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 
 	// The inner dimensions need to be the same
 	if matrix1.N != matrix2.M {
@@ -160,7 +160,7 @@ func (matrix *Matrix) TransposeMatrix() Matrix {
 	return *transpose
 }
 
-func MatrixAddition(matrix1 Matrix, matrix2 Matrix) Matrix {
+func MatrixAddition(matrix1, matrix2 Matrix) Matrix {
 
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
@@ -178,7 +178,7 @@ func MatrixAddition(matrix1 Matrix, matrix2 Matrix) Matrix {
 	return *matrix
 }
 
-func MatrixSubtraction(matrix1 Matrix, matrix2 Matrix) Matrix {
+func MatrixSubtraction(matrix1, matrix2 Matrix) Matrix {
 	// the dimensions of the matrices have to match
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("dimensions of matrices do not match")
@@ -334,7 +334,7 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 
 // tests if two matrices are the same within the given tolerance
 // similar to this numpy function: https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
-func compAllClose(matrix1 Matrix, matrix2 Matrix, tolerance float64) bool {
+func compAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("matrices do not have the same dimensions")
 	}
