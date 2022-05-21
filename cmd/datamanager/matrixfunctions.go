@@ -132,6 +132,15 @@ func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
 	return *ans
 }
 
+// creates the n x n identity matrix
+func IdentityMatrix(n int) Matrix {
+	identity := NewMatrix(n, n)
+	for i := 0; i < n; i++ {
+		identity.Matrix[i][i] = 1
+	}
+	return *identity
+}
+
 // Basic Matrix Multiplication
 func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 
