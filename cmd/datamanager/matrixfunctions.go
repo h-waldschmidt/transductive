@@ -141,6 +141,14 @@ func CreateIdentity(n int) Matrix {
 	return *identity
 }
 
+func CreateAllOnesVector(n int) Matrix {
+	allOnes := NewMatrix(1, n)
+	for i := 0; i < n; i++ {
+		allOnes.Matrix[1][i] = 1
+	}
+	return *allOnes
+}
+
 // Basic Matrix Multiplication
 func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 
