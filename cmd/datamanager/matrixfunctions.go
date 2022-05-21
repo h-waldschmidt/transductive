@@ -216,12 +216,14 @@ func MatrixSubtraction(matrix1, matrix2 Matrix) Matrix {
 }
 
 // Multiply all elements of the matrix with the scalar
-func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) {
-	for i := 0; i < matrix.N; i++ {
-		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j] *= scalar
+func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
+	answer := *matrix
+	for i := 0; i < answer.N; i++ {
+		for j := 0; j < answer.M; j++ {
+			answer.Matrix[i][j] *= scalar
 		}
 	}
+	return answer
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
