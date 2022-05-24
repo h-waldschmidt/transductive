@@ -2,7 +2,9 @@ package transductive
 
 import (
 	"log"
+	"math"
 	"transductive-experimental-design/cmd/datamanager"
+	"transductive-experimental-design/cmd/qpsolver"
 )
 
 // TODO: create global variables
@@ -54,7 +56,6 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 		findAlpha(*alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
 
 		// find optimal beta
-
 		// normalize Beta Matrix
 
 	}
@@ -80,6 +81,39 @@ func findAlpha(alphaMatrix, betaDiagonal, kMatrix datamanager.Matrix, kkMatrices
 	}
 
 	return newAlphaMatrix
+}
+
+func findBeta(beta, alphaMatrix, kk, k datamanager.Matrix, eigen datamanager.Eigen, lambda, sigma float64) datamanager.Matrix {
+	// prepare H matrix and f vector for qpsolver
+	h := datamanager.NewMatrix(beta.M, beta.M)
+	f := datamanager.NewMatrix(beta.M, 1)
+	identity := datamanager.CreateIdentity(beta.M)
+
+	for i := 0; i < len(eigen.Values); i++ {
+		alphaDiagonal := eigen.Vectors[i].VectorToDiagonalMatrix()
+
+		cacheH := identity.MatrixScalarMultiplication(lambda * eigen.Values[i])
+		cacheH = datamanager.MatrixAddition(cacheH, kk)
+		cacheH = datamanager.MatrixMultiplication(alphaDiagonal, cacheH)
+		cacheH = datamanager.MatrixMultiplication(cacheH, alphaDiagonal)
+
+		cacheH = datamanager.MatrixAddition(cacheH, *h)
+		h = &cacheH
+
+		cacheF := eigen.Vectors[i]
+		cacheF = cacheF.MatrixScalarMultiplication(math.Sqrt(eigen.Values[i]))
+		cacheF = datamanager.MatrixMultiplication(cacheF, k)
+		cacheF = datamanager.MatrixMultiplication(cacheF, alphaDiagonal)
+		cacheF = datamanager.MatrixAddition(cacheF, *f)
+		f = &cacheF
+	}
+	cacheF := f.MatrixScalarMultiplication(2)
+	cache := datamanager.CreateAllOnesVector(beta.M)
+	cache = cache.MatrixScalarMultiplication(sigma)
+	cache = datamanager.MatrixSubtraction(cache, cacheF)
+	f = &cache
+
+	return qpsolver.Solve(*h, *f)
 }
 
 // basically componentwise multiplication of two diagonal matrices
