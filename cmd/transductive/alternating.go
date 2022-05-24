@@ -2,9 +2,15 @@ package transductive
 
 import (
 	"math"
+	"sort"
 	"transductive-experimental-design/cmd/datamanager"
 	"transductive-experimental-design/cmd/qpsolver"
 )
+
+type ValueCoordinateTuple struct {
+	value      float64
+	coordinate []float64
+}
 
 // TODO: create global variables
 func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda, sigma float64) datamanager.Matrix {
@@ -61,10 +67,23 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 		beta = &cache
 	}
 
-	// extract selected Points from Beta Matrix,
-	// by selecting the numOfSelectedPoints biggest points
-	var ans datamanager.Matrix
-	return ans
+	// create slice with value coordinate tuples
+	tuples := make([]ValueCoordinateTuple, points.N)
+	for i := 0; i < points.N; i++ {
+		tuples[i] = ValueCoordinateTuple{beta.Matrix[1][i], points.Matrix[i]}
+	}
+
+	// sort it in descending order
+	sort.Slice(tuples, func(i, j int) bool {
+		return tuples[i].value > tuples[j].value
+	})
+
+	// extract the numOfSelectedPoints first values
+	ans := datamanager.NewMatrix(numOfSelectedPoints, points.M)
+	for i := 0; i < numOfSelectedPoints; i++ {
+		ans.Matrix[i] = tuples[i].coordinate
+	}
+	return *ans
 }
 
 func findAlpha(alphaMatrix, betaDiagonal, kMatrix datamanager.Matrix, kkMatrices, eigenVectors []datamanager.Matrix) datamanager.Matrix {
