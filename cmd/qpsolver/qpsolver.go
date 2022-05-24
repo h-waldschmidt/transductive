@@ -10,7 +10,7 @@ import (
 
 // Use the following library https://github.com/badgerodon/quadprog as current solution
 // might write my own byndings to https://doc.cgal.org/latest/QP_solver/index.html
-func SolveQP(D, d datamanager.Matrix) datamanager.Matrix {
+func Solve(D, d datamanager.Matrix) datamanager.Matrix {
 	// convert Matrices from this package into lalg Matrices and Vectors
 	lD := convertDMatrixToLMatrix(D)
 	ld := convertDMatrixToLVector(d)
