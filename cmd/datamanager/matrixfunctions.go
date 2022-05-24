@@ -234,6 +234,22 @@ func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 	return answer
 }
 
+// Multiply each element of matrix1 with the coresponding element of matrix2
+func ComponentWiseMultiplication(matrix1, matrix2 Matrix) Matrix {
+	// matrix1 and matrix2 need to have same dimensions
+	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
+		log.Fatal("dimensions of the matrices are not the same")
+	}
+
+	for i := 0; i < matrix1.N; i++ {
+		for j := 0; j < matrix1.M; j++ {
+			matrix1.Matrix[i][j] = matrix1.Matrix[i][j] * matrix2.Matrix[i][j]
+		}
+	}
+
+	return matrix1
+}
+
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
 // Explanation can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
 func (matrix *Matrix) CalculateEigen() Eigen {
