@@ -51,7 +51,7 @@ func convertDMatrixToLVector(dVector datamanager.Matrix) lalg.Vector {
 	lVector := lalg.NewVector(dVector.M)
 
 	for i := 0; i < len(lVector); i++ {
-		lVector[i] = dVector.Matrix[1][i]
+		lVector[i] = dVector.Matrix[0][i]
 	}
 
 	return lVector
@@ -73,7 +73,7 @@ func convertLMatrixToDMatrix(lMatrix lalg.Matrix) datamanager.Matrix {
 // convert lalg.Vector type to datamanager.Matrix (with N=1) type
 func convertLVectorToDMatrix(lVector lalg.Vector) datamanager.Matrix {
 	dVector := datamanager.NewMatrix(1, len(lVector))
-	dVector.Matrix[1] = lVector
+	dVector.Matrix[0] = lVector
 
 	return *dVector
 }
