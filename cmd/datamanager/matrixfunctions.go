@@ -117,7 +117,7 @@ func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
 
 	ans := NewMatrix(matrix.M, matrix.M)
 	for i := 0; i < matrix.N; i++ {
-		ans.Matrix[i][i] = matrix.Matrix[1][i]
+		ans.Matrix[i][i] = matrix.Matrix[0][i]
 	}
 	return *ans
 }
@@ -127,7 +127,7 @@ func (matrix *Matrix) DiagonalMatrixToVector() Matrix {
 
 	ans := NewMatrix(1, matrix.M)
 	for i := 0; i < matrix.N; i++ {
-		ans.Matrix[1][i] = matrix.Matrix[i][i]
+		ans.Matrix[0][i] = matrix.Matrix[i][i]
 	}
 	return *ans
 }
@@ -144,7 +144,7 @@ func CreateIdentity(n int) Matrix {
 func CreateAllOnesVector(n int) Matrix {
 	allOnes := NewMatrix(1, n)
 	for i := 0; i < n; i++ {
-		allOnes.Matrix[1][i] = 1
+		allOnes.Matrix[0][i] = 1
 	}
 	return *allOnes
 }
@@ -157,16 +157,14 @@ func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 		log.Fatal("inner dimensions of matrices do not match")
 	}
 
-	matrix := NewMatrix(matrix1.M, matrix2.N)
+	matrix := NewMatrix(matrix2.N, matrix1.M)
 
 	// need to test if this is the cache efficient version of matrix multiplication
 	for i := 0; i < matrix1.M; i++ {
 		for j := 0; j < matrix2.N; j++ {
-			var sum float64
 			for k := 0; k < matrix1.N; k++ {
-				sum += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
+				matrix.Matrix[j][i] += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
 			}
-			matrix.Matrix[i][j] = sum
 		}
 	}
 

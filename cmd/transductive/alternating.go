@@ -16,8 +16,7 @@ type ValueCoordinateTuple struct {
 func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda, sigma float64) datamanager.Matrix {
 
 	// create K = V * V^T matrix with V being the point Matrix
-	points_T := points.TransposeMatrix()
-	k := datamanager.MatrixMultiplication(points, points_T)
+	k := points.CalculateKernelMatrix(points, sigma)
 
 	// eigen components of K matrix
 	eigen := k.CalculateEigen()
@@ -40,7 +39,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 	// initialize beta slice
 	beta := datamanager.NewMatrix(1, points.N)
 	for i := 0; i < points.N; i++ {
-		beta.Matrix[1][i] = 0.1
+		beta.Matrix[0][i] = 0.1
 	}
 
 	// TODO: try to init alphaMatrix with different methods and Values
@@ -70,7 +69,7 @@ func AlternatingOptimization(points datamanager.Matrix, numOfSelectedPoints int,
 	// create slice with value coordinate tuples
 	tuples := make([]ValueCoordinateTuple, points.N)
 	for i := 0; i < points.N; i++ {
-		tuples[i] = ValueCoordinateTuple{beta.Matrix[1][i], points.Matrix[i]}
+		tuples[i] = ValueCoordinateTuple{beta.Matrix[0][i], points.Matrix[i]}
 	}
 
 	// sort it in descending order
@@ -120,7 +119,7 @@ func findBeta(beta, alphaMatrix, kk, k datamanager.Matrix, eigen datamanager.Eig
 		cacheH = datamanager.MatrixAddition(cacheH, *h)
 		h = &cacheH
 
-		cacheF := eigen.Vectors[i]
+		cacheF := eigen.Vectors[i].TransposeMatrix()
 		cacheF = cacheF.MatrixScalarMultiplication(math.Sqrt(eigen.Values[i]))
 		cacheF = datamanager.MatrixMultiplication(cacheF, k)
 		cacheF = datamanager.MatrixMultiplication(cacheF, alphaDiagonal)
@@ -129,8 +128,10 @@ func findBeta(beta, alphaMatrix, kk, k datamanager.Matrix, eigen datamanager.Eig
 	}
 	cacheF := f.MatrixScalarMultiplication(2)
 	cache := datamanager.CreateAllOnesVector(beta.M)
+	cache = cache.TransposeMatrix()
 	cache = cache.MatrixScalarMultiplication(sigma)
 	cache = datamanager.MatrixSubtraction(cache, cacheF)
+	cache = cache.TransposeMatrix()
 	f = &cache
 
 	return qpsolver.Solve(*h, *f)

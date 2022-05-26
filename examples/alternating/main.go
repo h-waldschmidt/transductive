@@ -19,7 +19,7 @@ func main() {
 	test := transductive.AlternatingOptimization(matrix, 4, 1, 1)
 	distribution_test := test.ConvertMatrixToCoordinateSlice()
 
-	err := datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_sequential.png")
+	err := datamanager.PlotSelectedPoints(distribution, distribution_test, "../../plots/test_alternating.png")
 	if err != nil {
 		log.Fatal(err)
 	}
