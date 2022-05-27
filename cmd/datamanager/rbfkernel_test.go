@@ -13,7 +13,8 @@ func TestRBFKernel_Basic(t *testing.T) {
 	value := datamanager.RbfKernel(x, y, 1)
 	expected := math.Exp(-1)
 
-	if value != expected {
+	// check if floating point error is within bounds
+	if math.Abs(value-expected) > 1e-14 {
 		t.Errorf("Expected: %f ; Got: %f", expected, value)
 	}
 }
