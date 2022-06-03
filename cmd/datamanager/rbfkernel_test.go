@@ -6,7 +6,7 @@ import (
 	"transductive-experimental-design/cmd/datamanager"
 )
 
-func TestRBFKernel_Basic(t *testing.T) {
+func TestRBFKernelBasic(t *testing.T) {
 	x := []float64{1, 1}
 	y := []float64{2, 2}
 
