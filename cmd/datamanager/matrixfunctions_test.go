@@ -1,6 +1,7 @@
 package datamanager_test
 
 import (
+	"fmt"
 	"testing"
 	"transductive-experimental-design/cmd/datamanager"
 
@@ -14,8 +15,32 @@ func TestMatrixMultiplicationBasic(t *testing.T) {
 	value := datamanager.MatrixMultiplication(a, b)
 	expected := datamanager.Matrix{2, 2, [][]float64{{7, 9}, {8, 2}}}
 
-	// check if floating point error is within bounds
 	if !cmp.Equal(value, expected) {
 		t.Errorf("Expected: %v ; Got: %v", expected, value)
+	}
+}
+
+func TestEigenBasic(t *testing.T) {
+	a := datamanager.Matrix{3, 3, [][]float64{{3, 2, -2}, {-1, 0, 2}, {0, 0, -1}}}
+
+	value := a.CalculateEigen()
+
+	expected_first_vector := datamanager.Matrix{1, 3, [][]float64{{1, 2, 1}}}
+	expected_second_vector := datamanager.Matrix{1, 3, [][]float64{{1, 1, 0}}}
+	expected_third_vector := datamanager.Matrix{1, 3, [][]float64{{0, 0, 1}}}
+	expected := datamanager.Eigen{[]float64{1, 2, -1}, []datamanager.Matrix{expected_first_vector, expected_second_vector, expected_third_vector}}
+	if !cmp.Equal(value, expected) {
+		t.Errorf("Expected: %v ; Got: %v", expected, value)
+	}
+}
+
+func TestQRDecompositionBasic(t *testing.T) {
+	a := datamanager.Matrix{3, 3, [][]float64{{12, 6, -4}, {-51, 167, 24}, {4, -68, -41}}}
+
+	q, r := a.QrDecomposition()
+	fmt.Printf("%v and %v", q, r)
+	value := datamanager.MatrixMultiplication(q, r)
+	if !cmp.Equal(a, value) {
+		t.Errorf("Expected: %v ; Got: %v", a, value)
 	}
 }
