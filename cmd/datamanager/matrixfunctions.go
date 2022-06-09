@@ -272,7 +272,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
-		equal := compAllClose(a_i, previous, tolerance)
+		equal := CompAllClose(a_i, previous, tolerance)
 		if equal {
 			break
 		}
@@ -392,7 +392,7 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 
 // tests if two matrices are the same within the given tolerance
 // similar to this numpy function: https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
-func compAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
+func CompAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("matrices do not have the same dimensions")
 	}
