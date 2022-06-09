@@ -256,7 +256,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		log.Fatalf("matrix has to be quadratic")
 	}
 
-	q, r := matrix.qrDecomposition()
+	q, r := matrix.QrDecomposition()
 	a_i := *matrix
 	q_i := q
 	var previous Matrix
@@ -265,7 +265,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 	for i := 0; i < 500; i++ {
 		previous = a_i
 		a_i = MatrixMultiplication(r, q)
-		q, r = a_i.qrDecomposition()
+		q, r = a_i.QrDecomposition()
 
 		q_i = MatrixMultiplication(q_i, q)
 
@@ -295,21 +295,23 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 
 // calculating the QR-Decomposition using the Householder Transformation
 // Explanation can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
-func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
-	//initialize all needed variables
-	var q, r Matrix
-	x := NewMatrix(1, matrix.M)
-	e := NewMatrix(1, matrix.N)
+func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
+	//initialize q,r matrix and x,e vectors
+	var q Matrix
+	r := *matrix
+	x := *NewMatrix(1, matrix.M)
+	e := *NewMatrix(1, matrix.N)
 
 	for i := 0; i < matrix.N; i++ {
-		x.Matrix[0] = matrix.Matrix[i]
-		e.Matrix[0] = matrix.Matrix[i]
+		x.Matrix[0] = r.Matrix[i]
 
 		alpha := EuclideanNorm(x.Matrix[0])
-		if matrix.Matrix[i][i] > 0 {
+		// TODO
+		if x.Matrix[0][i] == 0 {
 			alpha *= -1
 		}
 
+		// e should be ith vector of identity matrix
 		for j := 0; j < e.M; j++ {
 			if i == j {
 				e.Matrix[0][j] = 1
@@ -322,8 +324,8 @@ func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
 			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
 		}
 		norm := EuclideanNorm(e.Matrix[0])
-		e.MatrixScalarMultiplication(norm)
-		q_min := e.houseHolderTransformation()
+		cache := e.MatrixScalarMultiplication(1 / norm)
+		q_min := cache.houseHolderTransformation(i)
 
 		q_t := q_min.calculateQ_T(i)
 		if i == 0 {
@@ -335,24 +337,35 @@ func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
 			r = MatrixMultiplication(q_t, r)
 		}
 	}
-	return q, r
+	return q.TransposeMatrix(), r
 }
 
 // Householder Transformation
 // Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
-func (vector *Matrix) houseHolderTransformation() Matrix {
+func (vector *Matrix) houseHolderTransformation(k int) Matrix {
 	if vector.N != 1 {
 		log.Fatal("operation can only be performed on vector")
 	}
 
+	matrix := NewMatrix(vector.M-k, vector.M-k)
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			matrix.Matrix[i][j] = -2 * vector.Matrix[0][i] * vector.Matrix[0][j]
+			if i == j {
+				matrix.Matrix[i][j]++
+			}
+		}
+	}
+	/**
 	vector_t := vector.TransposeMatrix()
 	matrix := MatrixMultiplication(*vector, vector_t)
 
-	matrix.MatrixScalarMultiplication(2)
+	matrix.MatrixScalarMultiplication(-2)
 	for i := 0; i < matrix.N; i++ {
 		matrix.Matrix[i][i]++
 	}
-	return matrix
+	*/
+	return *matrix
 }
 
 // helper function for QR-Decomposition
@@ -360,9 +373,9 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
 	}
-	q_t := *matrix
-	for i := 0; i < matrix.N; i++ {
-		for j := 0; j < matrix.M; j++ {
+	q_t := NewMatrix(matrix.N+k, matrix.M+k)
+	for i := 0; i < q_t.N; i++ {
+		for j := 0; j < q_t.M; j++ {
 			if i < k || j < k {
 				if i == j {
 					q_t.Matrix[i][j] = 1
@@ -374,7 +387,7 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 			}
 		}
 	}
-	return q_t
+	return *q_t
 }
 
 // tests if two matrices are the same within the given tolerance
