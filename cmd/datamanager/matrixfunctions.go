@@ -307,7 +307,7 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 
 		alpha := EuclideanNorm(x.Matrix[0])
 		// TODO
-		if x.Matrix[0][i] == 0 {
+		if x.Matrix[0][i] > 0 {
 			alpha *= -1
 		}
 
