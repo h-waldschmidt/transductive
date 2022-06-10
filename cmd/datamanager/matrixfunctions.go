@@ -256,7 +256,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		log.Fatalf("matrix has to be quadratic")
 	}
 
-	q, r := matrix.qrDecomposition()
+	q, r := matrix.QrDecomposition()
 	a_i := *matrix
 	q_i := q
 	var previous Matrix
@@ -265,14 +265,15 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 	for i := 0; i < 500; i++ {
 		previous = a_i
 		a_i = MatrixMultiplication(r, q)
-		q, r = a_i.qrDecomposition()
+		q, r = a_i.QrDecomposition()
 
 		q_i = MatrixMultiplication(q_i, q)
 
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
-		equal := compAllClose(a_i, previous, tolerance)
+		// TODO: compare diagonal instead of whole matrix
+		equal := CompAllClose(a_i, previous, tolerance)
 		if equal {
 			break
 		}
@@ -280,8 +281,9 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 
 	// convert a_i and q_i into eigen datastructure
 	eigen.Vectors = make([]Matrix, q_i.N)
-	cache := NewMatrix(1, q_i.M)
+
 	for i := 0; i < q_i.N; i++ {
+		cache := NewMatrix(1, q_i.M)
 		cache.Matrix[0] = q_i.Matrix[i]
 		eigen.Vectors[i] = *cache
 	}
@@ -295,35 +297,33 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 
 // calculating the QR-Decomposition using the Householder Transformation
 // Explanation can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
-func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
-	//initialize all needed variables
-	var q, r Matrix
-	x := NewMatrix(1, matrix.M)
-	e := NewMatrix(1, matrix.N)
+func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
+	//initialize q,r matrix and x,e vectors
+	var q Matrix
+	r := *matrix
 
-	for i := 0; i < matrix.N; i++ {
-		x.Matrix[0] = matrix.Matrix[i]
-		e.Matrix[0] = matrix.Matrix[i]
+	for i := 0; i < matrix.N-1; i++ {
+		x := *NewMatrix(1, matrix.M-i)
+		e := *NewMatrix(1, matrix.N-i)
+
+		for j := 0; j < e.M; j++ {
+			x.Matrix[0][j] = r.Matrix[i][j+i]
+		}
+		e.Matrix[0][0] = 1
 
 		alpha := EuclideanNorm(x.Matrix[0])
-		if matrix.Matrix[i][i] > 0 {
+		if x.Matrix[0][0] >= 0 {
 			alpha *= -1
 		}
 
-		for j := 0; j < e.M; j++ {
-			if i == j {
-				e.Matrix[0][j] = 1
-			} else {
-				e.Matrix[0][j] = 0
-			}
-		}
+		// e should be ith vector of identity matrix
 
 		for j := 0; j < e.M; j++ {
 			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
 		}
 		norm := EuclideanNorm(e.Matrix[0])
-		e.MatrixScalarMultiplication(norm)
-		q_min := e.houseHolderTransformation()
+		cache := e.MatrixScalarMultiplication(1 / norm)
+		q_min := cache.houseHolderTransformation(i)
 
 		q_t := q_min.calculateQ_T(i)
 		if i == 0 {
@@ -335,24 +335,26 @@ func (matrix *Matrix) qrDecomposition() (Matrix, Matrix) {
 			r = MatrixMultiplication(q_t, r)
 		}
 	}
-	return q, r
+	return q.TransposeMatrix(), r
 }
 
 // Householder Transformation
 // Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
-func (vector *Matrix) houseHolderTransformation() Matrix {
+func (vector *Matrix) houseHolderTransformation(k int) Matrix {
 	if vector.N != 1 {
 		log.Fatal("operation can only be performed on vector")
 	}
 
-	vector_t := vector.TransposeMatrix()
-	matrix := MatrixMultiplication(*vector, vector_t)
-
-	matrix.MatrixScalarMultiplication(2)
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i][i]++
+	matrix := NewMatrix(vector.M, vector.M)
+	for i := 0; i < matrix.M; i++ {
+		for j := 0; j < matrix.N; j++ {
+			matrix.Matrix[j][i] = -2 * vector.Matrix[0][j] * vector.Matrix[0][i]
+			if i == j {
+				matrix.Matrix[j][i] += 1
+			}
+		}
 	}
-	return matrix
+	return *matrix
 }
 
 // helper function for QR-Decomposition
@@ -360,9 +362,9 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
 	}
-	q_t := *matrix
-	for i := 0; i < matrix.N; i++ {
-		for j := 0; j < matrix.M; j++ {
+	q_t := NewMatrix(matrix.N+k, matrix.M+k)
+	for i := 0; i < q_t.N; i++ {
+		for j := 0; j < q_t.M; j++ {
 			if i < k || j < k {
 				if i == j {
 					q_t.Matrix[i][j] = 1
@@ -374,12 +376,12 @@ func (matrix *Matrix) calculateQ_T(k int) Matrix {
 			}
 		}
 	}
-	return q_t
+	return *q_t
 }
 
 // tests if two matrices are the same within the given tolerance
 // similar to this numpy function: https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
-func compAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
+func CompAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("matrices do not have the same dimensions")
 	}
