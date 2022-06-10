@@ -1,10 +1,11 @@
 module transductive-experimental-design
 
-go 1.17
+go 1.18
 
 require (
 	github.com/badgerodon/lalg v0.0.0-20131221025232-d98d02968c5b
 	github.com/badgerodon/quadprog v0.0.0-20170722135126-99da70fa15d4
+	github.com/google/go-cmp v0.5.8
 	gonum.org/v1/plot v0.11.0
 )
 
@@ -15,7 +16,6 @@ require (
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.6.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/google/go-cmp v0.5.8 // indirect
-	golang.org/x/image v0.0.0-20220413100746-70e8d0d3baa9 // indirect
+	golang.org/x/image v0.0.0-20220601225756-64ec528b34cd // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
