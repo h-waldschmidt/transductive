@@ -1,7 +1,6 @@
 package datamanager_test
 
 import (
-	"fmt"
 	"testing"
 	"transductive-experimental-design/cmd/datamanager"
 
@@ -38,9 +37,9 @@ func TestQRDecompositionBasic(t *testing.T) {
 	a := datamanager.Matrix{3, 3, [][]float64{{12, 6, -4}, {-51, 167, 24}, {4, -68, -41}}}
 
 	q, r := a.QrDecomposition()
-	fmt.Printf("%v and %v", q, r)
+
 	value := datamanager.MatrixMultiplication(q, r)
-	if !cmp.Equal(a, value) {
+	if a.N != value.N || a.M != value.M || !datamanager.CompAllClose(a, value, 1e-12) {
 		t.Errorf("Expected: %v ; Got: %v", a, value)
 	}
 }

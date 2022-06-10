@@ -299,26 +299,22 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 	//initialize q,r matrix and x,e vectors
 	var q Matrix
 	r := *matrix
-	x := *NewMatrix(1, matrix.M)
-	e := *NewMatrix(1, matrix.N)
 
-	for i := 0; i < matrix.N; i++ {
-		x.Matrix[0] = r.Matrix[i]
+	for i := 0; i < matrix.N-1; i++ {
+		x := *NewMatrix(1, matrix.M-i)
+		e := *NewMatrix(1, matrix.N-i)
+
+		for j := 0; j < e.M; j++ {
+			x.Matrix[0][j] = r.Matrix[i][j+i]
+		}
+		e.Matrix[0][0] = 1
 
 		alpha := EuclideanNorm(x.Matrix[0])
-		// TODO
-		if x.Matrix[0][i] > 0 {
+		if x.Matrix[0][0] >= 0 {
 			alpha *= -1
 		}
 
 		// e should be ith vector of identity matrix
-		for j := 0; j < e.M; j++ {
-			if i == j {
-				e.Matrix[0][j] = 1
-			} else {
-				e.Matrix[0][j] = 0
-			}
-		}
 
 		for j := 0; j < e.M; j++ {
 			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
@@ -347,24 +343,15 @@ func (vector *Matrix) houseHolderTransformation(k int) Matrix {
 		log.Fatal("operation can only be performed on vector")
 	}
 
-	matrix := NewMatrix(vector.M-k, vector.M-k)
-	for i := 0; i < matrix.N; i++ {
-		for j := 0; j < matrix.M; j++ {
-			matrix.Matrix[i][j] = -2 * vector.Matrix[0][i] * vector.Matrix[0][j]
+	matrix := NewMatrix(vector.M, vector.M)
+	for i := 0; i < matrix.M; i++ {
+		for j := 0; j < matrix.N; j++ {
+			matrix.Matrix[j][i] = -2 * vector.Matrix[0][j] * vector.Matrix[0][i]
 			if i == j {
-				matrix.Matrix[i][j]++
+				matrix.Matrix[j][i] += 1
 			}
 		}
 	}
-	/**
-	vector_t := vector.TransposeMatrix()
-	matrix := MatrixMultiplication(*vector, vector_t)
-
-	matrix.MatrixScalarMultiplication(-2)
-	for i := 0; i < matrix.N; i++ {
-		matrix.Matrix[i][i]++
-	}
-	*/
 	return *matrix
 }
 
