@@ -272,6 +272,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
+		// TODO: compare diagonal instead of whole matrix
 		equal := CompAllClose(a_i, previous, tolerance)
 		if equal {
 			break
@@ -280,8 +281,9 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 
 	// convert a_i and q_i into eigen datastructure
 	eigen.Vectors = make([]Matrix, q_i.N)
-	cache := NewMatrix(1, q_i.M)
+
 	for i := 0; i < q_i.N; i++ {
+		cache := NewMatrix(1, q_i.M)
 		cache.Matrix[0] = q_i.Matrix[i]
 		eigen.Vectors[i] = *cache
 	}
