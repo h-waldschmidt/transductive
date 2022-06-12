@@ -249,7 +249,8 @@ func ComponentWiseMultiplication(matrix1, matrix2 Matrix) Matrix {
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
-// Explanation can be found here: https://de.wikipedia.org/wiki/QR-Algorithmus#Einfache_QR-Iteration
+// Explanation can be found here: https://towardsdatascience.com/eigenvalues-and-eigenvectors-89483fb56d56
+// Algorithm produces only correct eigenvectors for normal matrices (https://en.wikipedia.org/wiki/Normal_matrix)
 func (matrix *Matrix) CalculateEigen() Eigen {
 	var eigen Eigen
 	if matrix.N != matrix.M {
