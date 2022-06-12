@@ -21,8 +21,8 @@ func TestMatrixMultiplicationBasic(t *testing.T) {
 
 /**
 func TestEigenBasic(t *testing.T) {
-	a := datamanager.Matrix{3, 3, [][]float64{{3, 2, -2}, {-1, 0, 2}, {0, 0, -1}}}
-
+	//a := datamanager.Matrix{3, 3, [][]float64{{3, 2, -2}, {-1, 0, 2}, {0, 0, -1}}}
+	a := datamanager.Matrix{4, 4, [][]float64{{26, 40, 51, 54}, {40, 67, 62, 83}, {41, 62, 95, 70}, {54, 83, 70, 126}}}
 	value := a.CalculateEigen()
 
 	expected_first_vector := datamanager.Matrix{1, 3, [][]float64{{1, 2, 1}}}

@@ -256,40 +256,35 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		log.Fatalf("matrix has to be quadratic")
 	}
 
-	q, r := matrix.QrDecomposition()
-	a_i := *matrix
-	q_i := q
-	var previous Matrix
-
-	// QR-Algorithm
+	q, _ := matrix.QrDecomposition()
+	e := MatrixMultiplication(q.TransposeMatrix(), *matrix)
+	e = MatrixMultiplication(e, q)
+	u := q
 	for i := 0; i < 500; i++ {
-		previous = a_i
-		a_i = MatrixMultiplication(r, q)
-		q, r = a_i.QrDecomposition()
-
-		q_i = MatrixMultiplication(q_i, q)
-
+		previous := e
+		q, _ = e.QrDecomposition()
+		e = MatrixMultiplication(q.TransposeMatrix(), e)
+		e = MatrixMultiplication(e, q)
+		u = MatrixMultiplication(u, q)
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
 		// TODO: compare diagonal instead of whole matrix
-		equal := CompAllClose(a_i, previous, tolerance)
+		equal := CompAllClose(e, previous, tolerance)
 		if equal {
 			break
 		}
 	}
+	eigen.Vectors = make([]Matrix, u.N)
 
-	// convert a_i and q_i into eigen datastructure
-	eigen.Vectors = make([]Matrix, q_i.N)
-
-	for i := 0; i < q_i.N; i++ {
-		cache := NewMatrix(1, q_i.M)
-		cache.Matrix[0] = q_i.Matrix[i]
+	for i := 0; i < u.N; i++ {
+		cache := NewMatrix(1, u.M)
+		cache.Matrix[0] = u.Matrix[i]
 		eigen.Vectors[i] = *cache
 	}
-	eigen.Values = make([]float64, a_i.N)
-	for i := 0; i < a_i.N; i++ {
-		eigen.Values[i] = a_i.Matrix[i][i]
+	eigen.Values = make([]float64, e.N)
+	for i := 0; i < e.N; i++ {
+		eigen.Values[i] = e.Matrix[i][i]
 	}
 
 	return eigen
