@@ -1,1 +1,0 @@
-package qpsolver_test

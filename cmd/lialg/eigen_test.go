@@ -1,0 +1,33 @@
+package lialg_test
+
+import (
+	"testing"
+	"transductive-experimental-design/cmd/lialg"
+)
+
+/**
+func TestEigenBasic(t *testing.T) {
+	//a := lialg.Matrix{3, 3, [][]float64{{3, 2, -2}, {-1, 0, 2}, {0, 0, -1}}}
+	a := lialg.Matrix{4, 4, [][]float64{{26, 40, 51, 54}, {40, 67, 62, 83}, {41, 62, 95, 70}, {54, 83, 70, 126}}}
+	value := a.CalculateEigen()
+
+	expected_first_vector := lialg.Matrix{1, 3, [][]float64{{1, 2, 1}}}
+	expected_second_vector := lialg.Matrix{1, 3, [][]float64{{1, 1, 0}}}
+	expected_third_vector := lialg.Matrix{1, 3, [][]float64{{0, 0, 1}}}
+	expected := lialg.Eigen{[]float64{1, 2, -1}, []lialg.Matrix{expected_first_vector, expected_second_vector, expected_third_vector}}
+	if !cmp.Equal(value, expected) {
+		t.Errorf("Expected: %v ; Got: %v", expected, value)
+	}
+}
+*/
+
+func TestQRDecompositionBasic(t *testing.T) {
+	a := lialg.Matrix{3, 3, [][]float64{{12, 6, -4}, {-51, 167, 24}, {4, -68, -41}}}
+
+	q, r := a.QrDecomposition()
+
+	value := lialg.MatrixMultiplication(q, r)
+	if a.N != value.N || a.M != value.M || !lialg.CompAllClose(a, value, 1e-12) {
+		t.Errorf("Expected: %v ; Got: %v", a, value)
+	}
+}
