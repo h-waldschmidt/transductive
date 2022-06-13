@@ -1,8 +1,7 @@
-package qpsolver
+package lialg
 
 import (
 	"log"
-	"transductive-experimental-design/cmd/datamanager"
 
 	"github.com/badgerodon/lalg"
 	"github.com/badgerodon/quadprog"
@@ -10,7 +9,7 @@ import (
 
 // Use the following library https://github.com/badgerodon/quadprog as current solution
 // might write my own byndings to https://doc.cgal.org/latest/QP_solver/index.html
-func Solve(D, d datamanager.Matrix) datamanager.Matrix {
+func QPSolve(D, d Matrix) Matrix {
 	// convert Matrices from this package into lalg Matrices and Vectors
 	lD := convertDMatrixToLMatrix(D)
 	ld := convertDMatrixToLVector(d)
@@ -29,8 +28,8 @@ func Solve(D, d datamanager.Matrix) datamanager.Matrix {
 	return dAns
 }
 
-// convert datamanager.Matrix tpye to lalg.Matrix type
-func convertDMatrixToLMatrix(dMatrix datamanager.Matrix) lalg.Matrix {
+// convert Matrix tpye to Matrix type
+func convertDMatrixToLMatrix(dMatrix Matrix) lalg.Matrix {
 	lMatrix := lalg.NewMatrix(dMatrix.M, dMatrix.N)
 
 	for i := 0; i < lMatrix.Rows; i++ {
@@ -42,8 +41,8 @@ func convertDMatrixToLMatrix(dMatrix datamanager.Matrix) lalg.Matrix {
 	return lMatrix
 }
 
-// convert datamanager.Matrix (with N=1) to lalg.Vector type
-func convertDMatrixToLVector(dVector datamanager.Matrix) lalg.Vector {
+// convert Matrix (with N=1) to Vector type
+func convertDMatrixToLVector(dVector Matrix) lalg.Vector {
 	if dVector.N != 1 {
 		log.Fatal("N of dVector has to be 1")
 	}
@@ -57,9 +56,9 @@ func convertDMatrixToLVector(dVector datamanager.Matrix) lalg.Vector {
 	return lVector
 }
 
-// convert lalg.Matrix type to datamanager.Matrix type
-func convertLMatrixToDMatrix(lMatrix lalg.Matrix) datamanager.Matrix {
-	dMatrix := datamanager.NewMatrix(lMatrix.Cols, lMatrix.Rows)
+// convert Matrix type to Matrix type
+func convertLMatrixToDMatrix(lMatrix lalg.Matrix) Matrix {
+	dMatrix := NewMatrix(lMatrix.Cols, lMatrix.Rows)
 
 	for i := 0; i < dMatrix.N; i++ {
 		for j := 0; j < dMatrix.M; j++ {
@@ -70,9 +69,9 @@ func convertLMatrixToDMatrix(lMatrix lalg.Matrix) datamanager.Matrix {
 	return *dMatrix
 }
 
-// convert lalg.Vector type to datamanager.Matrix (with N=1) type
-func convertLVectorToDMatrix(lVector lalg.Vector) datamanager.Matrix {
-	dVector := datamanager.NewMatrix(1, len(lVector))
+// convert Vector type to Matrix (with N=1) type
+func convertLVectorToDMatrix(lVector lalg.Vector) Matrix {
+	dVector := NewMatrix(1, len(lVector))
 	dVector.Matrix[0] = lVector
 
 	return *dVector

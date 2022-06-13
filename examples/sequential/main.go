@@ -2,23 +2,23 @@ package main
 
 import (
 	"log"
-	"transductive-experimental-design/cmd/datamanager"
+	"transductive-experimental-design/cmd/plt"
 	"transductive-experimental-design/cmd/transductive"
 )
 
 func main() {
-	distribution := datamanager.CreateNormalDistribution(0, 0.1, 10)
-	anotherDistribution := datamanager.CreateNormalDistribution(4, 0.1, 10)
+	distribution := plt.CreateNormalDistribution(0, 0.1, 10)
+	anotherDistribution := plt.CreateNormalDistribution(4, 0.1, 10)
 	distribution = append(distribution, anotherDistribution...)
-	another := datamanager.CreateNormalDistribution(8, 0.1, 10)
+	another := plt.CreateNormalDistribution(8, 0.1, 10)
 	distribution = append(distribution, another...)
-	another = datamanager.CreateNormalDistribution(6, 0.1, 10)
+	another = plt.CreateNormalDistribution(6, 0.1, 10)
 	distribution = append(distribution, another...)
 
-	matrix := datamanager.ConvertCoordinatesToMatrix(distribution)
+	matrix := plt.ConvertCoordinatesToMatrix(distribution)
 	test := transductive.SequentialOptimization(matrix, 4, 1, 1)
-	distribution_test := test.ConvertMatrixToCoordinateSlice()
-	err := datamanager.PlotSelectedPoints(distribution, distribution_test, "plots/test_sequential.png")
+	distribution_test := plt.ConvertMatrixToCoordinateSlice(&test)
+	err := plt.PlotSelectedPoints(distribution, distribution_test, "plots/test_sequential.png")
 	if err != nil {
 		log.Fatal(err)
 	}
