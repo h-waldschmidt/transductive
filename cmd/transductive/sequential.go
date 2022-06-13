@@ -2,15 +2,15 @@ package transductive
 
 import (
 	"math"
-	"transductive-experimental-design/cmd/datamanager"
+	"transductive-experimental-design/cmd/lialg"
 )
 
 // TODO: create global variables
 
 //Sequential Algorithm for Transductive Experimental Design
 //Searches in every iteration the best point useing the criterion
-func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, lambda, sigma float64) datamanager.Matrix {
-	selectedPoints := datamanager.NewMatrix(numOfSelectedPoints, points.M)
+func SequentialOptimization(points lialg.Matrix, numOfSelectedPoints int, lambda, sigma float64) lialg.Matrix {
+	selectedPoints := lialg.NewMatrix(numOfSelectedPoints, points.M)
 
 	//initialize the kVVMatrix
 	kVVMatrix := points.CalculateKernelMatrix(points, sigma)
@@ -38,14 +38,14 @@ func SequentialOptimization(points datamanager.Matrix, numOfSelectedPoints int, 
 }
 
 // Criteria used for finding the best points
-func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index int, sigma, lambda float64) float64 {
+func calculateCriteria(kVVMatrix lialg.Matrix, currentX []float64, index int, sigma, lambda float64) float64 {
 	//initialize kVxMatrix
-	kVxVector := datamanager.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
+	kVxVector := lialg.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
 	kVxVector.Matrix[0] = kVVMatrix.Matrix[index]
 
 	kxVVector := kVxVector.TransposeMatrix()
 
-	value := datamanager.MatrixMultiplication(kxVVector, kVxVector)
+	value := lialg.MatrixMultiplication(kxVVector, kVxVector)
 
 	result := value.Matrix[0][0] / (1 + lambda)
 	return result
@@ -53,14 +53,14 @@ func calculateCriteria(kVVMatrix datamanager.Matrix, currentX []float64, index i
 
 // After selecting a point the kVVMatrix has to be normalized,
 //meaning the influence of the selected point has to be removed
-func normalizeKvvMatrix(kVVMatrix, points datamanager.Matrix, point []float64, lambda, sigma float64) datamanager.Matrix {
+func normalizeKvvMatrix(kVVMatrix, points lialg.Matrix, point []float64, lambda, sigma float64) lialg.Matrix {
 	VxMatrix := points.CalculateKernelVector(point, sigma)
 
 	xVMatrix := VxMatrix.TransposeMatrix()
-	VxxVMatrix := datamanager.MatrixMultiplication(VxMatrix, xVMatrix)
+	VxxVMatrix := lialg.MatrixMultiplication(VxMatrix, xVMatrix)
 
 	VxxVMatrix.MatrixScalarMultiplication(1 / (1 + lambda))
-	kVVMatrix = datamanager.MatrixSubtraction(kVVMatrix, VxxVMatrix)
+	kVVMatrix = lialg.MatrixSubtraction(kVVMatrix, VxxVMatrix)
 
 	return kVVMatrix
 }
