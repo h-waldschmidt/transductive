@@ -19,7 +19,7 @@ func TestMatrixMultiplicationBasic(t *testing.T) {
 	}
 }
 
-func TestEuclideanDistance_Basic(t *testing.T) {
+func TestEuclideanDistanceBasic(t *testing.T) {
 	x := Matrix{N: 1, M: 3, Matrix: [][]float64{{1, 2, 3}}}
 	y := Matrix{N: 1, M: 3, Matrix: [][]float64{{2, 3, 4}}}
 
@@ -31,7 +31,7 @@ func TestEuclideanDistance_Basic(t *testing.T) {
 	}
 }
 
-func TestEuclideanNorm_Basic(t *testing.T) {
+func TestEuclideanNormBasic(t *testing.T) {
 	x := Matrix{N: 1, M: 3, Matrix: [][]float64{{1, 2, 3}}}
 
 	value := EuclideanNorm(x.Matrix[0])

@@ -78,16 +78,16 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 		}
 		norm := EuclideanNorm(e.Matrix[0])
 		cache := e.MatrixScalarMultiplication(1 / norm)
-		q_min := cache.houseHolderTransformation(i)
+		qMin := cache.houseHolderTransformation(i)
 
-		q_t := q_min.calculateQ_T(i)
+		qT := qMin.calculateQT(i)
 		if i == 0 {
-			q = q_t
-			r = MatrixMultiplication(q_t, *matrix)
+			q = qT
+			r = MatrixMultiplication(qT, *matrix)
 		} else {
-			q = MatrixMultiplication(q_t, q)
+			q = MatrixMultiplication(qT, q)
 
-			r = MatrixMultiplication(q_t, r)
+			r = MatrixMultiplication(qT, r)
 		}
 	}
 	return q.TransposeMatrix(), r
@@ -113,23 +113,23 @@ func (vector *Matrix) houseHolderTransformation(k int) Matrix {
 }
 
 // helper function for QR-Decomposition
-func (matrix *Matrix) calculateQ_T(k int) Matrix {
+func (matrix *Matrix) calculateQT(k int) Matrix {
 	if matrix.N != matrix.M {
 		log.Fatal("given matrix is not quadratic")
 	}
-	q_t := NewMatrix(matrix.N+k, matrix.M+k)
-	for i := 0; i < q_t.N; i++ {
-		for j := 0; j < q_t.M; j++ {
+	qT := NewMatrix(matrix.N+k, matrix.M+k)
+	for i := 0; i < qT.N; i++ {
+		for j := 0; j < qT.M; j++ {
 			if i < k || j < k {
 				if i == j {
-					q_t.Matrix[i][j] = 1
+					qT.Matrix[i][j] = 1
 				} else {
-					q_t.Matrix[i][j] = 0
+					qT.Matrix[i][j] = 0
 				}
 			} else {
-				q_t.Matrix[i][j] = matrix.Matrix[i-k][j-k]
+				qT.Matrix[i][j] = matrix.Matrix[i-k][j-k]
 			}
 		}
 	}
-	return *q_t
+	return *qT
 }

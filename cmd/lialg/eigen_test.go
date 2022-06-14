@@ -10,10 +10,10 @@ func TestEigenBasic(t *testing.T) {
 	a := lialg.Matrix{4, 4, [][]float64{{26, 40, 51, 54}, {40, 67, 62, 83}, {41, 62, 95, 70}, {54, 83, 70, 126}}}
 	value := a.CalculateEigen()
 
-	expected_first_vector := lialg.Matrix{1, 3, [][]float64{{1, 2, 1}}}
-	expected_second_vector := lialg.Matrix{1, 3, [][]float64{{1, 1, 0}}}
-	expected_third_vector := lialg.Matrix{1, 3, [][]float64{{0, 0, 1}}}
-	expected := lialg.Eigen{[]float64{1, 2, -1}, []lialg.Matrix{expected_first_vector, expected_second_vector, expected_third_vector}}
+	expectedFirstVector := lialg.Matrix{1, 3, [][]float64{{1, 2, 1}}}
+	expectedSecondVector := lialg.Matrix{1, 3, [][]float64{{1, 1, 0}}}
+	expectedThirdVector := lialg.Matrix{1, 3, [][]float64{{0, 0, 1}}}
+	expected := lialg.Eigen{[]float64{1, 2, -1}, []lialg.Matrix{expectedFirstVector, expectedSecondVector, expectedThirdVector}}
 	if !cmp.Equal(value, expected) {
 		t.Errorf("Expected: %v ; Got: %v", expected, value)
 	}

@@ -26,13 +26,13 @@ func AlternatingOptimization(points lialg.Matrix, numOfSelectedPoints int, lambd
 
 	// create all the (K*K + lambda* eigen_value_i)^-1 matrices
 	// those are needed to find all the alpha_i
-	kk_slice := make([]lialg.Matrix, len(eigen.Values))
+	kkSlice := make([]lialg.Matrix, len(eigen.Values))
 	for i := 0; i < len(eigen.Values); i++ {
-		kk_slice[i] = kk
-		for j := 0; j < kk_slice[i].M; j++ {
-			kk_slice[i].Matrix[j][j] += lambda * eigen.Values[i]
+		kkSlice[i] = kk
+		for j := 0; j < kkSlice[i].M; j++ {
+			kkSlice[i].Matrix[j][j] += lambda * eigen.Values[i]
 		}
-		kk_slice[i] = kk_slice[i].Inverse()
+		kkSlice[i] = kkSlice[i].Inverse()
 	}
 
 	// TODO: try to init beta with different methods and Values
@@ -57,7 +57,7 @@ func AlternatingOptimization(points lialg.Matrix, numOfSelectedPoints int, lambd
 
 		// find optimal alpha
 		betaDiagonal := beta.VectorToDiagonalMatrix()
-		findAlpha(*alphaMatrix, betaDiagonal, k, kk_slice, eigen.Vectors)
+		findAlpha(*alphaMatrix, betaDiagonal, k, kkSlice, eigen.Vectors)
 
 		// find optimal beta
 		cache := findBeta(*beta, *alphaMatrix, kk, k, eigen, lambda, sigma)

@@ -17,8 +17,8 @@ func main() {
 
 	matrix := plt.ConvertCoordinatesToMatrix(distribution)
 	test := transductive.SequentialOptimization(matrix, 4, 1, 1)
-	distribution_test := plt.ConvertMatrixToCoordinateSlice(&test)
-	err := plt.PlotSelectedPoints(distribution, distribution_test, "plots/test_sequential.png")
+	distributionTest := plt.ConvertMatrixToCoordinateSlice(&test)
+	err := plt.PlotSelectedPoints(distribution, distributionTest, "plots/test_sequential.png")
 	if err != nil {
 		log.Fatal(err)
 	}
