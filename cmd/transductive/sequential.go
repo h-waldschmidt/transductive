@@ -40,7 +40,7 @@ func SequentialOptimization(points lialg.Matrix, numOfSelectedPoints int, lambda
 // Criteria used for finding the best points
 func calculateCriteria(kVVMatrix lialg.Matrix, currentX []float64, index int, sigma, lambda float64) float64 {
 	//initialize kVxMatrix
-	kVxVector := lialg.Matrix{1, kVVMatrix.N, make([][]float64, 1)}
+	kVxVector := lialg.Matrix{N: 1, M: kVVMatrix.N, Matrix: make([][]float64, 1)}
 	kVxVector.Matrix[0] = kVVMatrix.Matrix[index]
 
 	kxVVector := kVxVector.TransposeMatrix()
