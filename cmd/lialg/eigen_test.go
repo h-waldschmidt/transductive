@@ -1,8 +1,7 @@
-package lialg_test
+package lialg
 
 import (
 	"testing"
-	"transductive-experimental-design/cmd/lialg"
 )
 
 /**
@@ -22,12 +21,12 @@ func TestEigenBasic(t *testing.T) {
 */
 
 func TestQRDecompositionBasic(t *testing.T) {
-	a := lialg.Matrix{3, 3, [][]float64{{12, 6, -4}, {-51, 167, 24}, {4, -68, -41}}}
+	a := Matrix{3, 3, [][]float64{{12, 6, -4}, {-51, 167, 24}, {4, -68, -41}}}
 
 	q, r := a.QrDecomposition()
 
-	value := lialg.MatrixMultiplication(q, r)
-	if a.N != value.N || a.M != value.M || !lialg.CompAllClose(a, value, 1e-12) {
+	value := MatrixMultiplication(q, r)
+	if a.N != value.N || a.M != value.M || !CompAllClose(a, value, 1e-12) {
 		t.Errorf("Expected: %v ; Got: %v", a, value)
 	}
 }

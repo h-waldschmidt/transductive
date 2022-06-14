@@ -1,16 +1,15 @@
-package lialg_test
+package lialg
 
 import (
 	"math"
 	"testing"
-	"transductive-experimental-design/cmd/lialg"
 )
 
 func TestRBFKernelBasic(t *testing.T) {
 	x := []float64{1, 1}
 	y := []float64{2, 2}
 
-	value := lialg.RbfKernel(x, y, 1)
+	value := RbfKernel(x, y, 1)
 	expected := math.Exp(-1)
 
 	// check if floating point error is within bounds

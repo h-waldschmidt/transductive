@@ -1,1 +1,1 @@
-package kernelregression_test
+package kernelregression
