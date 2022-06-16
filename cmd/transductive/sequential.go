@@ -2,6 +2,7 @@ package transductive
 
 import (
 	"math"
+	"sync"
 	"transductive-experimental-design/cmd/lialg"
 )
 
@@ -19,15 +20,25 @@ func SequentialOptimization(points lialg.Matrix, numOfSelectedPoints int, lambda
 		//select x to maximize the criteria
 		var bestX []float64
 		bestValue := math.Inf(-1)
-
+		var wg sync.WaitGroup
+		var mutex sync.Mutex
 		for i := 0; i < points.N; i++ {
-			currentX := points.Matrix[i]
-			currentValue := calculateCriteria(kVVMatrix, currentX, i, sigma, lambda)
-			if currentValue > bestValue {
-				bestValue = currentValue
-				bestX = currentX
-			}
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				currentX := points.Matrix[i]
+				currentValue := calculateCriteria(kVVMatrix, currentX, i, sigma, lambda)
+				mutex.Lock()
+				{
+					if currentValue > bestValue {
+						bestValue = currentValue
+						bestX = currentX
+					}
+				}
+				mutex.Unlock()
+			}(i)
 		}
+		wg.Wait()
 
 		// add it the newly found x to the set
 		selectedPoints.Matrix[j] = bestX
