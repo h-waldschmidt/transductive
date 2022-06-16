@@ -3,6 +3,7 @@ package lialg
 import (
 	"log"
 	"math"
+	"sync"
 )
 
 // N represents the number of columns (so that a vector can be in one array)
@@ -141,15 +142,20 @@ func MatrixMultiplication(matrix1, matrix2 Matrix) Matrix {
 
 	matrix := NewMatrix(matrix2.N, matrix1.M)
 
+	var wg sync.WaitGroup
 	// need to test if this is the cache efficient version of matrix multiplication
 	for i := 0; i < matrix1.M; i++ {
-		for j := 0; j < matrix2.N; j++ {
-			for k := 0; k < matrix1.N; k++ {
-				matrix.Matrix[j][i] += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			for j := 0; j < matrix2.N; j++ {
+				for k := 0; k < matrix1.N; k++ {
+					matrix.Matrix[j][i] += matrix1.Matrix[k][i] * matrix2.Matrix[j][k]
+				}
 			}
-		}
+		}(i)
 	}
-
+	wg.Wait()
 	return *matrix
 }
 
