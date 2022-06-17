@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"sync"
 	"time"
 	"transductive-experimental-design/cmd/lialg"
 )
@@ -33,19 +34,26 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 
 	maxIterations := 50
 	for i := 0; i < maxIterations; i++ {
+		var wg sync.WaitGroup
 		for j := 0; j < points.N; j++ {
-			minDistance := math.Inf(1)
-			bestClusterIndex := -1
-			for k := 0; k < clusters.Centroids.N; k++ {
-				distance := lialg.EuclideanDistance(points.Matrix[j], clusters.Centroids.Matrix[k])
+			wg.Add(1)
+			go func(j int) {
+				defer wg.Done()
 
-				if distance < minDistance {
-					minDistance = distance
-					bestClusterIndex = k
+				minDistance := math.Inf(1)
+				bestClusterIndex := -1
+				for k := 0; k < clusters.Centroids.N; k++ {
+					distance := lialg.EuclideanDistance(points.Matrix[j], clusters.Centroids.Matrix[k])
+
+					if distance < minDistance {
+						minDistance = distance
+						bestClusterIndex = k
+					}
 				}
-			}
-			clusters.Assignments[j] = bestClusterIndex
+				clusters.Assignments[j] = bestClusterIndex
+			}(j)
 		}
+		wg.Wait()
 		clusters.updateCentroids()
 	}
 	return clusters, nil
