@@ -27,6 +27,11 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 		return clusters, fmt.Errorf("there should be at least %d points", numOfClusters)
 	}
 
+	// initialize clusters.Assignments with -1
+	for i := 0; i < len(clusters.Assignments); i++ {
+		clusters.Assignments[i] = -1
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < numOfClusters; i++ {
 		clusters.Centroids.Matrix[i] = points.Matrix[rand.Intn(numOfClusters+1)]
