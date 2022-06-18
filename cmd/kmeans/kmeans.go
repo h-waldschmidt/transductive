@@ -20,6 +20,8 @@ type Clusters struct {
 	Assignments []int
 }
 
+// cluster the data by using the basic k means clustering algorithm
+// the centroids in the first rounds are randomly initialized
 func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	clusters := Clusters{&points, *lialg.NewMatrix(numOfClusters, points.M), make([]int, points.N)}
 
@@ -64,6 +66,8 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	return clusters, nil
 }
 
+// helper function that updates the centroids by calculating
+// the average of the items in the cluster
 func (clusters *Clusters) updateCentroids() {
 	clusters.Centroids = *lialg.NewMatrix(clusters.Centroids.N, clusters.Centroids.M)
 
@@ -86,6 +90,9 @@ func (clusters *Clusters) updateCentroids() {
 	}
 }
 
+// adds the coresponding items of each slice (see example below)
+// slices need to have the same length
+// example: a = [0,1,2,3], b = [1,2,3,4] a+b = [1,3,5,7]
 func sliceAddition(a, b []float64) ([]float64, error) {
 	if len(a) != len(b) {
 		return nil, fmt.Errorf("slices have to be same length")
@@ -98,6 +105,7 @@ func sliceAddition(a, b []float64) ([]float64, error) {
 	return ans, nil
 }
 
+// multiplies every item of a slice with a factor
 func sliceMultiplication(a []float64, factor float64) []float64 {
 	ans := a
 	for i := 0; i < len(ans); i++ {
