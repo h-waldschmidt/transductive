@@ -1,5 +1,7 @@
 # transductive-experimental-design
 
+[![CI Pipeline](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/ci.yml/badge.svg)](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/ci.yml)
+
 This Project/Library is based on the algorithms presented in the following paper:<br>
 
 Yu Kai, Jinbo Bi, and Volker Tresp.<br>
