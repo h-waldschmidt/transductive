@@ -107,9 +107,9 @@ func sliceAddition(a, b []float64) ([]float64, error) {
 
 // multiplies every item of a slice with a factor
 func sliceMultiplication(a []float64, factor float64) []float64 {
-	ans := a
+	ans := make([]float64, len(a))
 	for i := 0; i < len(ans); i++ {
-		ans[i] *= factor
+		ans[i] = factor * a[i]
 	}
 	return ans
 }
