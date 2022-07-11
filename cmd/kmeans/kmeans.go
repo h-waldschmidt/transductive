@@ -98,9 +98,9 @@ func sliceAddition(a, b []float64) ([]float64, error) {
 		return nil, fmt.Errorf("slices have to be same length")
 	}
 
-	ans := a
+	ans := make([]float64, len(a))
 	for i := 0; i < len(ans); i++ {
-		ans[i] += b[i]
+		ans[i] = a[i] + b[i]
 	}
 	return ans, nil
 }
