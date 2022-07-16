@@ -60,7 +60,7 @@ func EuclideanNorm(x []float64) float64 {
 func SumNorm(x []float64) float64 {
 	var norm float64
 	for i := 0; i < len(x); i++ {
-		norm += x[i]
+		norm += math.Abs(x[i])
 	}
 
 	return norm
