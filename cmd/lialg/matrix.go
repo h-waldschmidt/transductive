@@ -99,7 +99,7 @@ func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
 	}
 
 	ans := NewMatrix(matrix.M, matrix.M)
-	for i := 0; i < matrix.N; i++ {
+	for i := 0; i < matrix.M; i++ {
 		ans.Matrix[i][i] = matrix.Matrix[0][i]
 	}
 	return *ans
