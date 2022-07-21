@@ -243,6 +243,10 @@ func CompAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 		log.Fatal("matrices do not have the same dimensions")
 	}
 
+	if tolerance < 0 {
+		log.Fatal("tolerance must be positive")
+	}
+
 	var difference float64
 	for i := 0; i < matrix1.N; i++ {
 		for j := 0; j < matrix1.M; j++ {
