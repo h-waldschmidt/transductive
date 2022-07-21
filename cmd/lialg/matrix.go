@@ -60,7 +60,7 @@ func EuclideanNorm(x []float64) float64 {
 func SumNorm(x []float64) float64 {
 	var norm float64
 	for i := 0; i < len(x); i++ {
-		norm += x[i]
+		norm += math.Abs(x[i])
 	}
 
 	return norm
@@ -99,7 +99,7 @@ func (matrix *Matrix) VectorToDiagonalMatrix() Matrix {
 	}
 
 	ans := NewMatrix(matrix.M, matrix.M)
-	for i := 0; i < matrix.N; i++ {
+	for i := 0; i < matrix.M; i++ {
 		ans.Matrix[i][i] = matrix.Matrix[0][i]
 	}
 	return *ans
@@ -241,6 +241,10 @@ func ComponentWiseMultiplication(matrix1, matrix2 Matrix) Matrix {
 func CompAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
 		log.Fatal("matrices do not have the same dimensions")
+	}
+
+	if tolerance < 0 {
+		log.Fatal("tolerance must be positive")
 	}
 
 	var difference float64

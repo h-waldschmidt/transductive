@@ -98,18 +98,18 @@ func sliceAddition(a, b []float64) ([]float64, error) {
 		return nil, fmt.Errorf("slices have to be same length")
 	}
 
-	ans := a
+	ans := make([]float64, len(a))
 	for i := 0; i < len(ans); i++ {
-		ans[i] += b[i]
+		ans[i] = a[i] + b[i]
 	}
 	return ans, nil
 }
 
 // multiplies every item of a slice with a factor
 func sliceMultiplication(a []float64, factor float64) []float64 {
-	ans := a
+	ans := make([]float64, len(a))
 	for i := 0; i < len(ans); i++ {
-		ans[i] *= factor
+		ans[i] = factor * a[i]
 	}
 	return ans
 }
