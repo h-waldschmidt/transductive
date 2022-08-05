@@ -1,6 +1,6 @@
 module transductive-experimental-design
 
-go 1.18
+go 1.19
 
 require (
 	github.com/badgerodon/lalg v0.0.0-20131221025232-d98d02968c5b
