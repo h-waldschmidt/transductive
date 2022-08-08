@@ -30,19 +30,20 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	}
 
 	// initialize clusters.Assignments with -1
-	for i := 0; i < len(clusters.Assignments); i++ {
+	for i := range clusters.Assignments {
 		clusters.Assignments[i] = -1
 	}
 
 	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < numOfClusters; i++ {
-		clusters.Centroids.Matrix[i] = points.Matrix[rand.Intn(numOfClusters+1)]
+	for i := range clusters.Centroids.Matrix {
+		rand := rand.Intn(len(points.Matrix))
+		clusters.Centroids.Matrix[i] = points.Matrix[rand]
 	}
 
 	maxIterations := 50
 	for i := 0; i < maxIterations; i++ {
 		var wg sync.WaitGroup
-		for j := 0; j < points.N; j++ {
+		for j := range points.Matrix {
 			wg.Add(1)
 			go func(j int) {
 				defer wg.Done()
@@ -83,7 +84,7 @@ func (clusters *Clusters) updateCentroids() {
 		}
 	}
 
-	for i := 0; i < clusters.Centroids.M; i++ {
+	for i := 0; i < clusters.Centroids.N; i++ {
 		if clusterNumOfItems[i] != 0 {
 			clusters.Centroids.Matrix[i] = sliceMultiplication(clusters.Centroids.Matrix[i], 1/float64(clusterNumOfItems[i]))
 		}
