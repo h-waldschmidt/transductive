@@ -81,6 +81,17 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	return clusters, nil
 }
 
+// calculates the inertia value of the cluster
+// see: https://en.wikipedia.org/wiki/K-means_clustering#Global_optimization_and_metaheuristics
+func (clusters *Clusters) Inertia() float64 {
+	var inertia float64
+	for i, point := range clusters.Points.Matrix {
+		index := clusters.Assignments[i]
+		inertia += lialg.EuclideanDistance(point, clusters.Centroids.Matrix[index])
+	}
+	return inertia
+}
+
 // helper function that updates the centroids by calculating
 // the average of the items in the cluster
 func (clusters *Clusters) updateCentroids() {
@@ -132,6 +143,14 @@ func sliceMultiplication(a []float64, factor float64) []float64 {
 // return smaller value of two given values
 func min[T constraints.Ordered](a, b T) T {
 	if a < b {
+		return a
+	}
+	return b
+}
+
+// return larger value of two given values
+func max[T constraints.Ordered](a, b T) T {
+	if a > b {
 		return a
 	}
 	return b
