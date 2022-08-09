@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 	"transductive-experimental-design/cmd/lialg"
+
+	"golang.org/x/exp/constraints"
 )
 
 // Clusters saves all the central points (centroids) as a matrix
@@ -34,10 +36,22 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 		clusters.Assignments[i] = -1
 	}
 
+	// k means++ initialization
 	rand.Seed(time.Now().UnixNano())
-	for i := range clusters.Centroids.Matrix {
-		rand := rand.Intn(len(points.Matrix))
-		clusters.Centroids.Matrix[i] = points.Matrix[rand]
+	rand := rand.Intn(len(points.Matrix))
+	clusters.Centroids.Matrix[0] = points.Matrix[rand]
+	for i := 1; i < numOfClusters; i++ {
+
+		distances := make([]float64, len(points.Matrix))
+		for j, point := range points.Matrix {
+
+			d := math.Inf(1)
+			for _, centroid := range clusters.Centroids.Matrix {
+				d = min(d, lialg.EuclideanDistance(point, centroid))
+			}
+			distances[j] = d
+		}
+		clusters.Centroids.Matrix[i] = points.Matrix[maxIndexSlice(distances)]
 	}
 
 	maxIterations := 50
@@ -113,4 +127,24 @@ func sliceMultiplication(a []float64, factor float64) []float64 {
 		ans[i] = factor * a[i]
 	}
 	return ans
+}
+
+// return smaller value of two given values
+func min[T constraints.Ordered](a, b T) T {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func maxIndexSlice(a []float64) int {
+	maxIndex := -1
+	maxValue := math.Inf(-1)
+	for i, value := range a {
+		if value > maxValue {
+			maxIndex = i
+			maxValue = value
+		}
+	}
+	return maxIndex
 }
