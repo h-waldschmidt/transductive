@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"transductive-experimental-design/cmd/kmeans"
 	"transductive-experimental-design/cmd/plt"
@@ -17,13 +18,17 @@ func main() {
 
 	matrix := plt.ConvertCoordinatesToMatrix(distribution)
 
-	test, err := kmeans.Calculate(matrix, 4)
+	test, err := kmeans.Calculate(matrix, 8)
 	if err != nil {
 		log.Fatal(err)
 	}
 	distributionTest := plt.ConvertMatrixToCoordinateSlice(&test.Centroids)
+
 	err = plt.PlotSelectedPoints(distribution, distributionTest, "plots/test_kmeans.png")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	inertia := test.SilhouetteCoefficient()
+	fmt.Printf("%v", inertia)
 }
