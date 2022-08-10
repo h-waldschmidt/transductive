@@ -8,8 +8,8 @@ import (
 
 // TODO: create global variables
 
-//Sequential Algorithm for Transductive Experimental Design
-//Searches in every iteration the best point useing the criterion
+// Sequential Algorithm for Transductive Experimental Design
+// Searches in every iteration the best point useing the criterion
 func SequentialOptimization(points lialg.Matrix, numOfSelectedPoints int, lambda, sigma float64) lialg.Matrix {
 	selectedPoints := lialg.NewMatrix(numOfSelectedPoints, points.M)
 
@@ -63,7 +63,7 @@ func calculateCriteria(kVVMatrix lialg.Matrix, currentX []float64, index int, si
 }
 
 // After selecting a point the kVVMatrix has to be normalized,
-//meaning the influence of the selected point has to be removed
+// meaning the influence of the selected point has to be removed
 func normalizeKvvMatrix(kVVMatrix, points lialg.Matrix, point []float64, lambda, sigma float64) lialg.Matrix {
 	VxMatrix := points.CalculateKernelVector(point, sigma)
 
