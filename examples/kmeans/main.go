@@ -18,7 +18,7 @@ func main() {
 
 	matrix := plt.ConvertCoordinatesToMatrix(distribution)
 
-	test, err := kmeans.Calculate(matrix, 8)
+	test, err := kmeans.Calculate(matrix, 40)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,6 +29,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	inertia := test.SilhouetteCoefficient()
+	inertia := test.Inertia()
 	fmt.Printf("%v", inertia)
 }
