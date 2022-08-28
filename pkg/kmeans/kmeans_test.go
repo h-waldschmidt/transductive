@@ -3,10 +3,10 @@ package kmeans
 import (
 	"math"
 	"testing"
-	"transductive-experimental-design/internal/lialg"
-	"transductive-experimental-design/pkg/plt"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/h-waldschmidt/transductive/internal/lialg"
+	"github.com/h-waldschmidt/transductive/pkg/plt"
 )
 
 func TestClusteringError(t *testing.T) {

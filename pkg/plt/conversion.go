@@ -2,7 +2,8 @@ package plt
 
 import (
 	"log"
-	"transductive-experimental-design/internal/lialg"
+
+	"github.com/h-waldschmidt/transductive/internal/lialg"
 )
 
 // only used for visualizing 2D Vectors

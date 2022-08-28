@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"transductive-experimental-design/pkg/plt"
-	"transductive-experimental-design/pkg/transductive"
+
+	"github.com/h-waldschmidt/transductive/pkg/plt"
+	"github.com/h-waldschmidt/transductive/pkg/transductive"
 )
 
 func main() {

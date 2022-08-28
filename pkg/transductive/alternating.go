@@ -3,7 +3,8 @@ package transductive
 import (
 	"math"
 	"sort"
-	"transductive-experimental-design/internal/lialg"
+
+	"github.com/h-waldschmidt/transductive/internal/lialg"
 )
 
 type ValueCoordinateTuple struct {

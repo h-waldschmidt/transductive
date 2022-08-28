@@ -7,7 +7,8 @@ import (
 	"math/rand"
 	"sync"
 	"time"
-	"transductive-experimental-design/internal/lialg"
+
+	"github.com/h-waldschmidt/transductive/internal/lialg"
 )
 
 // Clusters saves all the central points (centroids) as a matrix

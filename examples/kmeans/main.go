@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"transductive-experimental-design/pkg/kmeans"
-	"transductive-experimental-design/pkg/plt"
+
+	"github.com/h-waldschmidt/transductive/pkg/kmeans"
+	"github.com/h-waldschmidt/transductive/pkg/plt"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 
 	matrix := plt.ConvertCoordinatesToMatrix(distribution)
 
-	test, err := kmeans.Calculate(matrix, 40)
+	test, err := kmeans.Calculate(matrix, 4)
 	if err != nil {
 		log.Fatal(err)
 	}
