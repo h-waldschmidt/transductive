@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"transductive-experimental-design/cmd/kmeans"
-	"transductive-experimental-design/cmd/plt"
+	"transductive-experimental-design/pkg/kmeans"
+	"transductive-experimental-design/pkg/plt"
 )
 
 func main() {

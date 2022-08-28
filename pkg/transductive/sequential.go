@@ -3,7 +3,7 @@ package transductive
 import (
 	"math"
 	"sync"
-	"transductive-experimental-design/cmd/lialg"
+	"transductive-experimental-design/internal/lialg"
 )
 
 // TODO: create global variables

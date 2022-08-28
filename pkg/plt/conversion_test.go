@@ -2,7 +2,7 @@ package plt
 
 import (
 	"testing"
-	"transductive-experimental-design/cmd/lialg"
+	"transductive-experimental-design/internal/lialg"
 
 	"github.com/google/go-cmp/cmp"
 )

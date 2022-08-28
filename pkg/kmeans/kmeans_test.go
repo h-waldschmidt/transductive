@@ -3,8 +3,8 @@ package kmeans
 import (
 	"math"
 	"testing"
-	"transductive-experimental-design/cmd/lialg"
-	"transductive-experimental-design/cmd/plt"
+	"transductive-experimental-design/internal/lialg"
+	"transductive-experimental-design/pkg/plt"
 
 	"github.com/google/go-cmp/cmp"
 )
