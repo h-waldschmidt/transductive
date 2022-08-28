@@ -2,9 +2,9 @@ package plt
 
 import (
 	"testing"
-	"transductive-experimental-design/cmd/lialg"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/h-waldschmidt/transductive/internal/lialg"
 )
 
 func TestConvertSliceToCoordinateNormal(t *testing.T) {
