@@ -3,6 +3,7 @@
 [![Build](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/build.yml/badge.svg)](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/build.yml)
 [![Test](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/test.yml/badge.svg)](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/h-waldschmidt/transductive-experimental-design/branch/main/graph/badge.svg?token=CJ4UBDX0C8)](https://codecov.io/gh/h-waldschmidt/transductive-experimental-design)
+[![Go Report Card](https://goreportcard.com/badge/github.com/h-waldschmidt/transductive)](https://goreportcard.com/report/github.com/h-waldschmidt/transductive)
 
 This Project/Library is based on the algorithms presented in the following paper:<br>
 
