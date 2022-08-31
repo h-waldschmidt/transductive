@@ -15,9 +15,7 @@ type ValueCoordinateTuple struct {
 // TODO: create global variables
 func AlternatingOptimization(points lialg.Matrix, numOfSelectedPoints int, lambda, sigma float64) lialg.Matrix {
 
-	// create K = V * V^T matrix with V being the point Matrix
-	k := lialg.MatrixMultiplication(points, points.TransposeMatrix())
-	//k := points.CalculateKernelMatrix(points, sigma)
+	k := points.CalculateKernelMatrix(points, sigma)
 
 	// eigen components of K matrix
 	eigen := k.CalculateEigen()
@@ -127,6 +125,7 @@ func findBeta(beta, alphaMatrix, kk, k lialg.Matrix, eigen lialg.Eigen, lambda, 
 		cacheF = lialg.MatrixAddition(cacheF, *f)
 		f = &cacheF
 	}
+	// finish f calculation
 	cacheF := f.MatrixScalarMultiplication(2)
 	cache := lialg.CreateAllOnesVector(beta.M)
 	cache = cache.TransposeMatrix()
