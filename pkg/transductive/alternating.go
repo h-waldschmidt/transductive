@@ -105,11 +105,11 @@ func findBeta(beta, alphaMatrix, kk, k lialg.Matrix, eigen lialg.Eigen, lambda, 
 	// prepare H matrix and f vector for qpsolver
 	h := lialg.NewMatrix(beta.M, beta.M)
 	f := lialg.NewMatrix(beta.M, 1)
-	identity := lialg.CreateIdentity(beta.M)
 
 	for i := 0; i < len(eigen.Values); i++ {
-		alphaDiagonal := eigen.Vectors[i].VectorToDiagonalMatrix()
+		alphaDiagonal := lialg.SliceToDiagonalMatrix(alphaMatrix.Matrix[i])
 
+		identity := lialg.CreateIdentity(beta.M)
 		cacheH := identity.MatrixScalarMultiplication(lambda * eigen.Values[i])
 		cacheH = lialg.MatrixAddition(cacheH, kk)
 		cacheH = lialg.MatrixMultiplication(alphaDiagonal, cacheH)
