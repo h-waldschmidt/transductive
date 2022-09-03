@@ -318,7 +318,12 @@ func (matrix *Matrix) InverseDiagonal() Matrix {
 	inverse := Matrix{matrix.N, matrix.M, make([][]float64, matrix.N)}
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = make([]float64, inverse.M)
-		inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
+
+		if matrix.Matrix[i][i] != 0 {
+			inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
+		} else {
+			inverse.Matrix[i][i] = matrix.Matrix[i][i]
+		}
 	}
 
 	return inverse
