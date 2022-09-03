@@ -319,12 +319,11 @@ func (matrix *Matrix) InverseDiagonal() Matrix {
 	for i := 0; i < inverse.N; i++ {
 		inverse.Matrix[i] = make([]float64, inverse.M)
 
-		if matrix.Matrix[i][i] >= 0 && matrix.Matrix[i][i] > 1e-8 {
-			inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
-		} else if matrix.Matrix[i][i] < 0 {
-			inverse.Matrix[i][i] = 1 / matrix.Matrix[i][i]
+		value := math.Round(matrix.Matrix[i][i]*1e8) / 1e8
+		if value != 0 {
+			inverse.Matrix[i][i] = 1 / value
 		} else {
-			inverse.Matrix[i][i] = matrix.Matrix[i][i]
+			inverse.Matrix[i][i] = 0
 		}
 	}
 
