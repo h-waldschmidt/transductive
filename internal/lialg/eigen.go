@@ -8,7 +8,9 @@ type Eigen struct {
 }
 
 // CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
+//
 // Explanation can be found here: https://towardsdatascience.com/eigenvalues-and-eigenvectors-89483fb56d56
+//
 // Algorithm produces only correct eigenvectors for normal matrices (https://en.wikipedia.org/wiki/Normal_matrix)
 func (matrix *Matrix) CalculateEigen() Eigen {
 	var eigen Eigen
@@ -46,11 +48,11 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 	for i := 0; i < e.N; i++ {
 		eigen.Values[i] = e.Matrix[i][i]
 	}
-
 	return eigen
 }
 
 // calculating the QR-Decomposition using the Householder Transformation
+//
 // Explanation can be found here: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 	//initialize q,r matrix and x,e vectors
@@ -72,7 +74,6 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 		}
 
 		// e should be ith vector of identity matrix
-
 		for j := 0; j < e.M; j++ {
 			e.Matrix[0][j] = x.Matrix[0][j] + alpha*e.Matrix[0][j]
 		}
@@ -86,7 +87,6 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 			r = MatrixMultiplication(qT, *matrix)
 		} else {
 			q = MatrixMultiplication(qT, q)
-
 			r = MatrixMultiplication(qT, r)
 		}
 	}
@@ -94,6 +94,7 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 }
 
 // Householder Transformation
+//
 // Explanation can be found here: https://de.wikipedia.org/wiki/Householdertransformation
 func (vector *Matrix) houseHolderTransformation(k int) Matrix {
 	if vector.N != 1 {
