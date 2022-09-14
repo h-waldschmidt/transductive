@@ -248,6 +248,28 @@ func CompAllClose(matrix1, matrix2 Matrix, tolerance float64) bool {
 	return true
 }
 
+// tests if the diagonal of two quadratic matrices is almost same within given tolerance
+func CompDiagonalClose(matrix1, matrix2 Matrix, tolerance float64) bool {
+	if matrix1.N != matrix2.N || matrix1.M != matrix2.M {
+		log.Fatal("matrices do not have the same dimensions")
+	}
+	if matrix1.N != matrix2.N {
+		log.Fatal("matrices must be quadratic")
+	}
+	if tolerance < 0 {
+		log.Fatal("tolerance must be positive")
+	}
+
+	var difference float64
+	for i := 0; i < matrix1.N; i++ {
+		difference = math.Abs(matrix1.Matrix[i][i] - matrix2.Matrix[i][i])
+		if difference > tolerance {
+			return false
+		}
+	}
+	return true
+}
+
 // calculates the multiplicative Inverse of the matrix,
 // using the Gauss Jordan Algorithm
 //

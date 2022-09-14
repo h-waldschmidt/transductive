@@ -31,8 +31,7 @@ func (matrix *Matrix) CalculateEigen() Eigen {
 		// same tolerance used as numpy
 		tolerance := 1e-08
 
-		// TODO: compare diagonal instead of whole matrix
-		equal := CompAllClose(e, previous, tolerance)
+		equal := CompDiagonalClose(e, previous, tolerance)
 		if equal {
 			break
 		}
