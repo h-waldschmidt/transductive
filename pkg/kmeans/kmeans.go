@@ -12,6 +12,7 @@ import (
 )
 
 // Clusters saves all the central points (centroids) as a matrix
+//
 // Each point of the points Matrix is assigned to a matrix in the assignments slice
 // index of point in points matrix represents index in assignments slice
 // assignments slice saves the index of the cluster it is assigned to
@@ -23,8 +24,9 @@ type Clusters struct {
 	Assignments   []int
 }
 
-// cluster the data by using the basic k means clustering algorithm
-// the centroids in the first rounds are randomly initialized
+// cluster the data by using the k-means++ clustering algorithm
+//
+// the centroids in the first rounds are initialized by using k-means++
 func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	clusters := Clusters{
 		&points,
@@ -48,7 +50,6 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 	rand := rand.Intn(len(points.Matrix))
 	clusters.Centroids.Matrix[0] = points.Matrix[rand]
 	for i := 1; i < numOfClusters; i++ {
-
 		distances := make([]float64, len(points.Matrix))
 		for j, point := range points.Matrix {
 
@@ -61,6 +62,7 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 		clusters.Centroids.Matrix[i] = points.Matrix[maxIndexSlice(distances)]
 	}
 
+	// core k-means algorithm
 	maxIterations := 50
 	for i := 0; i < maxIterations; i++ {
 		var wg sync.WaitGroup
@@ -68,7 +70,6 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 			wg.Add(1)
 			go func(j int) {
 				defer wg.Done()
-
 				minDistance := math.Inf(1)
 				bestClusterIndex := -1
 				for k := 0; k < clusters.Centroids.N; k++ {
@@ -76,7 +77,6 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 						points.Matrix[j],
 						clusters.Centroids.Matrix[k],
 					)
-
 					if distance < minDistance {
 						minDistance = distance
 						bestClusterIndex = k
@@ -92,6 +92,7 @@ func Calculate(points lialg.Matrix, numOfClusters int) (Clusters, error) {
 }
 
 // calculates the inertia value of the cluster
+//
 // see: https://en.wikipedia.org/wiki/K-means_clustering#Global_optimization_and_metaheuristics
 func (clusters *Clusters) Inertia() float64 {
 	var inertia float64
@@ -103,6 +104,7 @@ func (clusters *Clusters) Inertia() float64 {
 }
 
 // calculates the silhouette coefficient of the cluster
+//
 // see: https://en.wikipedia.org/wiki/Silhouette_(clustering)
 func (clusters *Clusters) SilhouetteCoefficient() float64 {
 	var coefficient float64
@@ -120,7 +122,6 @@ func (clusters *Clusters) silhouette(index int) float64 {
 	clusterIndex := clusters.Assignments[index]
 	if len(clusters.ClusterPoints[clusterIndex]) > 1 {
 		for _, val := range clusters.ClusterPoints[clusterIndex] {
-
 			intraDistance += lialg.EuclideanDistance(
 				clusters.Points.Matrix[val],
 				clusters.Points.Matrix[index],
@@ -153,16 +154,13 @@ func (clusters *Clusters) silhouette(index int) float64 {
 // the average of the items in the cluster
 func (clusters *Clusters) updateClusters() {
 	clusters.Centroids = *lialg.NewMatrix(clusters.Centroids.N, clusters.Centroids.M)
-
 	var err error
 	clusterNumOfItems := make([]int, clusters.Centroids.N)
 
 	// reset cluster points
 	clusters.ClusterPoints = make([][]int, clusters.NumOfClusters)
-
 	for i, cluster := range clusters.Assignments {
 		clusterNumOfItems[cluster]++
-
 		clusters.ClusterPoints[cluster] = append(clusters.ClusterPoints[cluster], i)
 
 		clusters.Centroids.Matrix[cluster], err = sliceAddition(
@@ -184,7 +182,9 @@ func (clusters *Clusters) updateClusters() {
 }
 
 // adds the coresponding items of each slice (see example below)
+//
 // slices need to have the same length
+//
 // example: a = [0,1,2,3], b = [1,2,3,4] a+b = [1,3,5,7]
 func sliceAddition(a, b []float64) ([]float64, error) {
 	if len(a) != len(b) {
