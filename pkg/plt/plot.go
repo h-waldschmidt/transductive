@@ -10,6 +10,7 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
+// plots given items and saves the plot at specified path
 func PlotDistribution(items []Coordinate, path string) error {
 	var itemsXYs plotter.XYs
 	for _, xy := range items {
@@ -46,6 +47,8 @@ func PlotDistribution(items []Coordinate, path string) error {
 	return nil
 }
 
+// plots points and selected Points each in different colors and
+// saves the plot at specified location
 func PlotSelectedPoints(items, selectedPoints []Coordinate, path string) error {
 	var itemsXYs plotter.XYs
 	for _, xy := range items {
