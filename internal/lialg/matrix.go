@@ -65,6 +65,21 @@ func SumNorm(x []float64) float64 {
 	return norm
 }
 
+// Calculate cosine similarity between two vectors
+func CosineSimilarity(vec1 Matrix, vec2 Matrix) float64 {
+	if vec1.N != 1 || vec2.N != 1 || vec1.M != vec2.M {
+		log.Fatal("Dimensions do not match")
+	}
+
+	cosineSimilarity := 0.0
+	for i := 0; i < vec1.M; i++ {
+		cosineSimilarity += vec1.Matrix[0][i] * vec2.Matrix[0][i]
+	}
+
+	cosineSimilarity /= EuclideanNorm(vec1.Matrix[0]) * EuclideanNorm(vec2.Matrix[0])
+	return cosineSimilarity
+}
+
 // convert slice to diagonal Matrix
 func SliceToDiagonalMatrix(x []float64) Matrix {
 	// not using the constructor for efficiency
