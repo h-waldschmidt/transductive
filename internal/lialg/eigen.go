@@ -1,53 +1,130 @@
 package lialg
 
-import "log"
+import (
+	"log"
+	"math"
+)
 
 type Eigen struct {
 	Values  []float64
 	Vectors []Matrix
 }
 
-// CalculateEigen uses the QR Algorithm to calculate the eigenvalues and eigenvectors
-//
-// Explanation can be found here: https://towardsdatascience.com/eigenvalues-and-eigenvectors-89483fb56d56
-//
-// Algorithm produces only correct eigenvectors for normal matrices (https://en.wikipedia.org/wiki/Normal_matrix)
+// Calculate Eigen uses the QR Algorithm to calculate the eigenvalues (Schur Factorization)
+// and the Eigenvectors by solving (A - eigenValue * I) * x = 0 for each eigenvalue
 func (matrix *Matrix) CalculateEigen() Eigen {
 	var eigen Eigen
 	if matrix.N != matrix.M {
 		log.Fatalf("matrix has to be quadratic")
 	}
 
-	q, _ := matrix.QrDecomposition()
-	e := MatrixMultiplication(q.TransposeMatrix(), *matrix)
-	e = MatrixMultiplication(e, q)
-	u := q
-	for i := 0; i < 500; i++ {
-		previous := e
-		q, _ = e.QrDecomposition()
-		e = MatrixMultiplication(q.TransposeMatrix(), e)
-		e = MatrixMultiplication(e, q)
-		u = MatrixMultiplication(u, q)
-		// same tolerance used as numpy
-		tolerance := 1e-08
+	// copy matrix data
+	ak := *NewMatrix(matrix.N, matrix.N)
+	for i := 0; i < matrix.N; i++ {
+		for j := 0; j < matrix.M; j++ {
+			ak.Matrix[i][j] = matrix.Matrix[i][j]
+		}
+	}
+	qq := *NewMatrix(matrix.M, matrix.M)
+	qq.AddDiagonal(1)
 
-		equal := CompDiagonalClose(e, previous, tolerance)
+	// same tolerance used as numpy
+	tolerance := 1e-08
+
+	for i := 0; i < 500; i++ {
+		previous := ak
+		s := ak.Matrix[ak.N-1][ak.N-1]
+		ak.SubDiagonal(s)
+		q, r := ak.QrDecomposition()
+		ak = MatrixMultiplication(r, q)
+		ak.AddDiagonal(s)
+		qq = MatrixMultiplication(qq, q)
+
+		equal := CompDiagonalClose(ak, previous, tolerance)
 		if equal {
 			break
 		}
 	}
-	eigen.Vectors = make([]Matrix, u.N)
 
-	for i := 0; i < u.N; i++ {
-		cache := NewMatrix(1, u.M)
-		cache.Matrix[0] = u.Matrix[i]
-		eigen.Vectors[i] = *cache
+	eigen.Vectors = make([]Matrix, ak.N)
+
+	// solve (A - eigenValue * I) * x = 0 for each eigenvalue
+	for i := 0; i < matrix.N; i++ {
+		var eigenVector Matrix
+
+		// test all columns for eigen vectors
+		// basically sets one each variable as one and then tests
+		for k := 0; k < matrix.N; k++ {
+
+			// copy matrix data
+			curMatrix := *NewMatrix(matrix.N, matrix.N)
+			for l := 0; l < matrix.N; l++ {
+				for j := 0; j < matrix.M; j++ {
+					curMatrix.Matrix[l][j] = matrix.Matrix[l][j]
+				}
+			}
+
+			// subtract current eigen value
+			curMatrix.SubDiagonal(ak.Matrix[i][i])
+
+			zero := *NewMatrix(1, curMatrix.M)
+
+			// remove first column of r
+			for j := 0; j < zero.M; j++ {
+				zero.Matrix[0][j] = -curMatrix.Matrix[k][j]
+			}
+			curMatrix.Matrix = append(curMatrix.Matrix[:k], curMatrix.Matrix[k+1:]...)
+			curMatrix.N--
+
+			// solve linear system
+			q, r := curMatrix.QrDecomposition()
+			q = q.TransposeMatrix()
+			zero = MatrixMultiplication(q, zero)
+			eigenVector = BackwardsSubstitution(&r, &zero)
+
+			eigenVector.Matrix[0] = append(eigenVector.Matrix[0], 0)
+			copy(eigenVector.Matrix[0][k+1:], eigenVector.Matrix[0][k:])
+			eigenVector.Matrix[0][k] = 1
+			eigenVector.M++
+
+			// weird bug with huge vectors and cosine similarity, that says that vectors are similar
+			// just skip those vectors, because probably not right
+			// TODO: find fix for this
+			if EuclideanNorm(eigenVector.Matrix[0]) > 1e12 {
+				continue
+			}
+
+			cache := MatrixMultiplication(*matrix, eigenVector)
+			cosineSimilarity := CosineSimilarity(eigenVector, cache)
+			if math.Abs(cosineSimilarity)-1 < tolerance {
+				eigen.Vectors[i] = eigenVector
+				break
+			}
+		}
 	}
-	eigen.Values = make([]float64, e.N)
-	for i := 0; i < e.N; i++ {
-		eigen.Values[i] = e.Matrix[i][i]
+
+	eigen.Values = make([]float64, ak.N)
+	for i := 0; i < matrix.N; i++ {
+		eigen.Values[i] = ak.Matrix[i][i]
 	}
 	return eigen
+}
+
+func BackwardsSubstitution(matrix *Matrix, vector *Matrix) Matrix {
+	if matrix.M != vector.M || vector.N != 1 || matrix.N > matrix.M {
+		log.Fatal("Either Dimensions do not match or the given vector has not only one dimension")
+	}
+
+	solution := NewMatrix(1, matrix.N)
+	for i := matrix.N - 1; i >= 0; i-- {
+		solution.Matrix[0][i] = vector.Matrix[0][i]
+		for j := i + 1; j < matrix.N; j++ {
+			solution.Matrix[0][i] -= (matrix.Matrix[j][i] * solution.Matrix[0][j])
+		}
+		solution.Matrix[0][i] /= matrix.Matrix[i][i]
+	}
+
+	return *solution
 }
 
 // calculating the QR-Decomposition using the Householder Transformation
@@ -60,7 +137,7 @@ func (matrix *Matrix) QrDecomposition() (Matrix, Matrix) {
 
 	for i := 0; i < matrix.N-1; i++ {
 		x := *NewMatrix(1, matrix.M-i)
-		e := *NewMatrix(1, matrix.N-i)
+		e := *NewMatrix(1, matrix.M-i)
 
 		for j := 0; j < e.M; j++ {
 			x.Matrix[0][j] = r.Matrix[i][j+i]
