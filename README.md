@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/build.yml/badge.svg)](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/build.yml)
 [![Test](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/test.yml/badge.svg)](https://github.com/h-waldschmidt/transductive-experimental-design/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/h-waldschmidt/transductive-experimental-design/branch/main/graph/badge.svg?token=CJ4UBDX0C8)](https://codecov.io/gh/h-waldschmidt/transductive-experimental-design)
+[![codecov](https://codecov.io/gh/h-waldschmidt/transductive/branch/main/graph/badge.svg?token=CJ4UBDX0C8)](https://codecov.io/gh/h-waldschmidt/transductive)
 [![Go Report Card](https://goreportcard.com/badge/github.com/h-waldschmidt/transductive)](https://goreportcard.com/report/github.com/h-waldschmidt/transductive)
 
 Transductive experimental design (TED) by Kai Yu et. al. [[1]](#1) selects the most informative points from a dataset to solve a regression problem.
