@@ -198,6 +198,26 @@ func MatrixSubtraction(matrix1, matrix2 Matrix) Matrix {
 	return *matrix
 }
 
+// adds a component to each diagonal element of matrix
+//
+// ensure that matrix is quadratic
+func (matrix *Matrix) AddDiagonal(a float64) {
+	if matrix.N != matrix.M {
+		log.Fatalf("matrix has to be quadratic")
+	}
+
+	for i := 0; i < matrix.N; i++ {
+		matrix.Matrix[i][i] += a
+	}
+}
+
+// subtracts a component to each diagonal element of matrix
+//
+// ensure that matrix is quadratic
+func (matrix *Matrix) SubDiagonal(a float64) {
+	matrix.AddDiagonal(-a)
+}
+
 // Multiply all elements of the matrix with the scalar
 func (matrix *Matrix) MatrixScalarMultiplication(scalar float64) Matrix {
 	answer := *matrix
