@@ -8,10 +8,10 @@
 Transductive experimental design (TED) by Kai Yu et. al. [[1]](#1) selects the most informative points from a dataset to solve a regression problem.
 The data doesn't need to be labeled, meaning that TED can be used for active learning.
 
-This library currently only supports the sequential version of TED (the alternating version is still work in progress). 
+This library currently only supports the sequential version of TED (the alternating version is still a work in progress). 
 
-Additionaly an implementation of k-means++ is provided for comparisement.
-In future updates implementations of various optimal design algorithms will be provided for comparisement.
+Additionally, an implementation of k-means++ is provided for comparison.
+In future updates, implementations of various optimal design algorithms will be provided for comparison.
 
 Examples can be found in [examples](https://github.com/h-waldschmidt/transductive/tree/main/examples)
 
@@ -19,5 +19,5 @@ Examples can be found in [examples](https://github.com/h-waldschmidt/transductiv
 
 <a id="1">[1]</a> 
 Yu Kai, Jinbo Bi, and Volker Tresp.
-"Active learning via transductive experimental design."
+"Optimized placement of charging stations for electric cars"
 Proceedings of the 23rd international conference on Machine learning. 2006.
